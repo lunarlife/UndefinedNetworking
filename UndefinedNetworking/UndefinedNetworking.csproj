@@ -21,6 +21,18 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="obj\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="obj\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="obj\**" />
+    </ItemGroup>
+
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="xcopy /y /d  &quot;$(ProjectDir)$(OutDir)\UndefinedNetworking.dll&quot; &quot;C:\Code\Frameworks&quot;&#xA;xcopy /y /d  &quot;$(ProjectDir)$(OutDir)\UndefinedNetworking.dll&quot; &quot;D:\UndefinedProject\Undefined\Assets\Plugins&quot;" />
     </Target>
