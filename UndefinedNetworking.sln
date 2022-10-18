@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UndefinedNetworking", "UndefinedNetworking\UndefinedNetworking.csproj", "{FAC87E84-9329-409C-B86C-7743B8EB25D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UndefinedServer", "UndefinedServer\UndefinedServer.csproj", "{CDA93499-7B62-45E7-A2E3-3629D24B5C3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPlugin", "ServerPlugin\ServerPlugin.csproj", "{2523759D-F7C0-4A84-A564-D232AEC16D07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FAC87E84-9329-409C-B86C-7743B8EB25D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAC87E84-9329-409C-B86C-7743B8EB25D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAC87E84-9329-409C-B86C-7743B8EB25D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAC87E84-9329-409C-B86C-7743B8EB25D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDA93499-7B62-45E7-A2E3-3629D24B5C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDA93499-7B62-45E7-A2E3-3629D24B5C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDA93499-7B62-45E7-A2E3-3629D24B5C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDA93499-7B62-45E7-A2E3-3629D24B5C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2523759D-F7C0-4A84-A564-D232AEC16D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2523759D-F7C0-4A84-A564-D232AEC16D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2523759D-F7C0-4A84-A564-D232AEC16D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2523759D-F7C0-4A84-A564-D232AEC16D07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

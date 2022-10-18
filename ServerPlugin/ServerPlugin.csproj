@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>ServerPlugin</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Networking">
+        <HintPath>C:\Code\Frameworks\Networking.dll</HintPath>
+      </Reference>
+      <Reference Include="UndefinedNetworking">
+        <HintPath>C:\Code\Frameworks\UndefinedNetworking.dll</HintPath>
+      </Reference>
+      <Reference Include="UndefinedServer">
+        <HintPath>C:\Code\Frameworks\UndefinedServer.dll</HintPath>
+      </Reference>
+      <Reference Include="Utils">
+        <HintPath>C:\Code\Frameworks\Utils.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

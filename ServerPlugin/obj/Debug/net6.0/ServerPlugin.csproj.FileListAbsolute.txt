@@ -1,0 +1,17 @@
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\bin\Debug\net6.0\ServerPlugin.deps.json
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\bin\Debug\net6.0\ServerPlugin.dll
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\bin\Debug\net6.0\ServerPlugin.pdb
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\bin\Debug\net6.0\Networking.dll
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\bin\Debug\net6.0\UndefinedNetworking.dll
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\bin\Debug\net6.0\UndefinedServer.dll
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\bin\Debug\net6.0\Utils.dll
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.csproj.AssemblyReference.cache
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.GeneratedMSBuildEditorConfig.editorconfig
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.AssemblyInfoInputs.cache
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.AssemblyInfo.cs
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.csproj.CoreCompileInputs.cache
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.csproj.CopyComplete
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.dll
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\refint\ServerPlugin.dll
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ServerPlugin.pdb
+D:\UndefinedProject\UndefinedNetworking\ServerPlugin\obj\Debug\net6.0\ref\ServerPlugin.dll
