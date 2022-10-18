@@ -1,5 +1,5 @@
 
-namespace Networking.Window.UI;
+namespace UndefinedNetworking.Window.UI;
 
 public interface IUIElement
 {

@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using Networking.Window.UI;
+using Networking;
+using UndefinedNetworking.Window.UI;
 using Utils;
 
-namespace Networking.Window;
+namespace UndefinedNetworking.Window;
 
 public interface IRectTransform
 {

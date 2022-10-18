@@ -1,6 +1,6 @@
-using Networking.Window;
+using UndefinedNetworking.Window;
 
-namespace Networking.Events.Window;
+namespace UndefinedNetworking.Events.Window;
 
 public class WindowFloatingEvent<T> : WindowEvent<T> where T : IWindow
 {

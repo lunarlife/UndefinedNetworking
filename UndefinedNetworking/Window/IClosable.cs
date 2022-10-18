@@ -1,7 +1,7 @@
-using Networking.Events.Window;
+using UndefinedNetworking.Events.Window;
 using Utils.Events;
 
-namespace Networking.Window;
+namespace UndefinedNetworking.Window;
 
 public interface IClosable<T> : IEventCaller<WindowCloseEvent<T>> where T : IWindow
 {

@@ -2,9 +2,8 @@ using Utils;
 
 namespace UndefinedServer.Plugins
 {
-    public abstract class PluginConfiguration
+    public struct PluginConfiguration
     {
-        public abstract Version PluginVersion { get; }
-
+        public Version PluginVersion { get; set; }
     }
 }

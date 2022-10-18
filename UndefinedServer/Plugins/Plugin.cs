@@ -55,7 +55,8 @@ namespace UndefinedServer.Plugins
             try
             {
                 var plugin = (Plugin)Activator.CreateInstance(pluginType)!;
-                if (plugin.Configuration is not { } conf) throw new PluginLoadException(filePath, $"Plugin {nameof(Configuration)} cant be null");
+                if (string.IsNullOrEmpty(plugin.Configuration.PluginVersion.ToString()))
+                    throw new PluginLoadException(filePath, $"Plugin version cant be null or empty");
                 return plugin;
             }
             catch (Exception e)

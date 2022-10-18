@@ -1,4 +1,4 @@
-namespace Networking.Window.UI
+namespace UndefinedNetworking.Window.UI
 {
     public enum UIBind : byte
     {

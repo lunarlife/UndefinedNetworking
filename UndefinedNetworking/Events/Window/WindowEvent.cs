@@ -1,7 +1,7 @@
-using Networking.Window;
+using UndefinedNetworking.Window;
 using Utils.Events;
 
-namespace Networking.Events.Window;
+namespace UndefinedNetworking.Events.Window;
 
 public abstract class WindowEvent<T> : Event where T : IWindow
 {

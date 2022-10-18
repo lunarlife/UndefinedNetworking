@@ -1,7 +1,7 @@
-using Networking.Window.UI;
+using UndefinedNetworking.Window.UI;
 using Utils.Events;
 
-namespace Networking.Events.Window.UI;
+namespace UndefinedNetworking.Events.Window.UI;
 
 public abstract class UIEvent<T> : Event where T : IUIElement
 {

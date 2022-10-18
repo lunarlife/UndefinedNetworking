@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Networking.Window.UI;
+using UndefinedNetworking.Window.UI;
 
-namespace Networking.Window;
+namespace UndefinedNetworking.Window;
 
-public interface IWindow
+public interface IWindow : IUIElement
 {
     public IReadOnlyList<IUIElement> Elements { get; }
     public void AddElement(IUIElement element);

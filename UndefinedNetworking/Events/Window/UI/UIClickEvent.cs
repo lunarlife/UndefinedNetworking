@@ -1,6 +1,6 @@
-using Networking.Window.UI;
+using UndefinedNetworking.Window.UI;
 
-namespace Networking.Events.Window.UI;
+namespace UndefinedNetworking.Events.Window.UI;
 
 public abstract class UIClickEvent<T> : UIEvent<T> where T : IUIElement
 {
