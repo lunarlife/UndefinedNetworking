@@ -67,7 +67,7 @@ namespace UndefinedNetworking.Packets.Server
         {
             [DataProperty] public string Prefix;
             [DataProperty] public string Description;
-            [DataProperty] public string[]? ParametersTitles;
+            [DataProperty] public string[] ParametersTitles;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace UndefinedServer.Commands
         public abstract string Prefix { get; }
         public abstract string Description { get; }
         public abstract ParameterType[]? Parameters { get; }
-        public abstract void Execute(ServerPlayer sender, CommandParameter[]? args, ChatType type);
+        public abstract void Execute(ISender sender, CommandParameter[]? args, ChatType type);
 
         public virtual void OnFailArgumentsLength(ISender sender, ChatType type)
         {

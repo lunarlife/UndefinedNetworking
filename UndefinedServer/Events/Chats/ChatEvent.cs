@@ -6,11 +6,11 @@ namespace UndefinedServer.Events.Chats
     public class ChatEvent : Event, ICancellable
     {
         public bool IsCancelled { get; set; }
-        public ServerPlayer Sender { get; }
+        public UndefinedServer.Player Sender { get; }
         public string Message { get; set; }
         public ChatType ChatType { get; set; }
         
-        public ChatEvent(ServerPlayer sender, string message, ChatType chatType)
+        public ChatEvent(UndefinedServer.Player sender, string message, ChatType chatType)
         {
             Sender = sender;
             Message = message;

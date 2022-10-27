@@ -24,7 +24,7 @@ namespace UndefinedServer
                 IsSending = true
             };
             _packeter.Receive += OnReceive;
-            _packeter.UnhandledException += exception => UServer.Logger.Error(exception.Message + "\n" + exception.StackTrace);
+            _packeter.UnhandledException += exception => Undefined.Logger.Error(exception.Message + "\n" + exception.StackTrace);
         }
         internal void SendPacket(params Packet[] packets)
         {

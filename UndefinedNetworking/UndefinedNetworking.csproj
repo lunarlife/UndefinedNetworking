@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
         <RootNamespace>UndefinedNetworking</RootNamespace>
         <TargetFramework>netstandard2.1</TargetFramework>
@@ -31,6 +31,10 @@
 
     <ItemGroup>
       <None Remove="obj\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Events\UI" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

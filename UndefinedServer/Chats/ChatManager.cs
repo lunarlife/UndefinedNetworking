@@ -22,7 +22,7 @@ namespace UndefinedServer.Chats
             get => _debugChatIsEnabled;
             set
             {
-                if(!UServer.IsEnabled) throw new ChatException("you can change this only before enabled");
+                if(!Undefined.IsEnabled) throw new ChatException("you can change this only before enabled");
                 _debugChatIsEnabled = value;
                 if(_debugChatIsEnabled)
                     EChats.AddMember<DebugChat>("debug");
@@ -54,7 +54,7 @@ namespace UndefinedServer.Chats
         private void OnPacketReceive(PacketReceiveEvent e)
         {
             if (e.Packet is not ChatPacket packet) return;
-            var player = UServer.CurrentGame.GetPlayer(e.Client.Identifier);
+            var player = Undefined.CurrentGame.GetPlayer(e.Client.Identifier);
             if (packet.Message is null) return;
             if (!EChats.Contains(packet.ChatTypeID))
             {

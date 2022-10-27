@@ -20,8 +20,8 @@ namespace UndefinedServer
     public sealed class Game
     {
         private readonly Logger _logger;
-        private Dictionary<Identifier, ServerPlayer> _players = new();
-        public IEnumerable<ServerPlayer> Players => _players.Values;
+        private readonly Dictionary<Identifier, Player> _players = new();
+        public IReadOnlyList<Player> Players => _players.Values.ToList();
 
         public World World { get; }
 
@@ -55,16 +55,16 @@ namespace UndefinedServer
         {
             //TODO: do it
         }
-        public void ConnectPlayer(ServerPlayer serverPlayer)
+        public void ConnectPlayer(Player player)
         {
-            serverPlayer.CurrentGame = this;
-            _players.Add(serverPlayer.Identifier, serverPlayer);
-            _logger.Info($"Player {serverPlayer.Nickname} with id {serverPlayer.Identifier} joined");
-            SendGamePacket(serverPlayer, new PlayerConnectPacket(serverPlayer.Identifier, serverPlayer.Nickname));
-            EventManager.CallEvent(new PlayerConnectedEvent(serverPlayer));
+            player.CurrentGame = this;
+            _players.Add(player.Identifier, player);
+            _logger.Info($"Player {player.Nickname} with id {player.Identifier} joined");
+            SendGamePacket(player, new PlayerConnectPacket(player.Identifier, player.Nickname));
+            EventManager.CallEvent(new PlayerConnectedEvent(player));
             
             
-            if(ChatManager.DebugChatIsEnabled) serverPlayer.SendMessage(new ChatMessage(ServerSender.Instance, "sosi hui ebalai", Color.DarkRed, ChatManager.GetChat("debug")));
+            if(ChatManager.DebugChatIsEnabled) player.SendMessage(new ChatMessage(ServerSender.Instance, "sosi hui ebalai", Color.DarkRed, ChatManager.GetChat("debug")));
         }
 
         public void Stop()
@@ -83,7 +83,7 @@ namespace UndefinedServer
         {
             SendGamePacket(null, packets);
         }
-        internal void SendGamePacket(ServerPlayer? without, params Packet[] packets)
+        internal void SendGamePacket(Player? without, params Packet[] packets)
         {
             if (packets.Length == 0)
                 return;
@@ -96,15 +96,15 @@ namespace UndefinedServer
             }
         }
 
-        public ServerPlayer GetPlayer(Identifier id)
+        public Player GetPlayer(Identifier id)
         {
             if (!_players.ContainsKey(id))
                 throw new GameException("player not founded");
             return _players[id];
         }
-        public ServerPlayer GetPlayer(string nickname) => _players.Values.FirstOrDefault(player => player.Nickname == nickname) ?? throw new GameException("player not founded");
+        public Player GetPlayer(string nickname) => _players.Values.FirstOrDefault(player => player.Nickname == nickname) ?? throw new GameException("player not founded");
 
-        public bool TryGetPlayer(Identifier id, out ServerPlayer? player)
+        public bool TryGetPlayer(Identifier id, out Player? player)
         {
             if (!_players.ContainsKey(id))
             {
@@ -114,7 +114,7 @@ namespace UndefinedServer
             player = _players[id];
             return true;
         }
-        public bool TryGetPlayer(string nickname, out ServerPlayer? player)
+        public bool TryGetPlayer(string nickname, out Player? player)
         {
             if (_players.Values.FirstOrDefault(player => player.Nickname == nickname) is not { } p)
             {

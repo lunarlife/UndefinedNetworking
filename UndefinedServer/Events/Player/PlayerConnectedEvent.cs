@@ -2,9 +2,9 @@ namespace UndefinedServer.Events.Player
 {
     public class PlayerConnectedEvent : PlayerEvent
     {
-        public override ServerPlayer Player { get; }
+        public override UndefinedServer.Player Player { get; }
         
-        public PlayerConnectedEvent(ServerPlayer player)
+        public PlayerConnectedEvent(UndefinedServer.Player player)
         {
             Player = player;
         }

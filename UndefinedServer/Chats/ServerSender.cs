@@ -17,7 +17,7 @@ namespace UndefinedServer.Chats
         
         public void SendMessage(ChatMessage message)
         {
-            UServer.Logger.Info($"({message.Chat.DisplayName}) {message.Title} => {message.Text}");
+            Undefined.Logger.Info($"({message.Chat.DisplayName}) {message.Title} => {message.Text}");
         }
     }
 }

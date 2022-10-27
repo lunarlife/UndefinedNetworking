@@ -1,13 +1,15 @@
 using System.Collections.Generic;
-using UndefinedNetworking.Window;
-using UndefinedNetworking.Window.UI;
+using UndefinedNetworking.GameEngine.UI;
+using UndefinedNetworking.GameEngine.UI.Elements;
+using UndefinedNetworking.GameEngine.UI.Elements.Interfaces;
+using UndefinedNetworking.GameEngine.UI.Windows.Interfaces;
 
 namespace UndefinedServer.Windows;
 
 public class Window : IWindow
 {
+    private List<IUIElement> _elements;
     public IRectTransform Transform { get; }
-    private readonly List<IUIElement> _elements = new();
 
     public IReadOnlyList<IUIElement> Elements => _elements;
 

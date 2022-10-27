@@ -37,13 +37,13 @@ namespace UndefinedNetworking.Packets
     public class ParameterCompletesPacket
     {
         [DataProperty]
-        public string[] Parameters { get; private set; }
+        public string[]? Parameters { get; private set; }
         [DataProperty]
         public bool IsRepeatable { get; private set; }
         [DataProperty]
         public string Title { get; private set; }
 
-        public ParameterCompletesPacket(string[] parameters, bool isRepeatable, string title)
+        public ParameterCompletesPacket(string[]? parameters, bool isRepeatable, string title)
         {
             Parameters = parameters;
             IsRepeatable = isRepeatable;

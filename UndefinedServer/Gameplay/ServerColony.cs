@@ -8,7 +8,7 @@ namespace UndefinedServer.Gameplay
 {
     public class ServerColony : IColony
     {
-        public ServerPlayer Owner { get; }
+        public Player Owner { get; }
 
         private List<IHuman> _humans = new();
 
@@ -18,7 +18,7 @@ namespace UndefinedServer.Gameplay
         public IEnumerable<IHuman> Humans => _humans;
 
 
-        public ServerColony(Dot2Int position, ServerPlayer owner)
+        public ServerColony(Dot2Int position, Player owner)
         {
             _position = position;
             Owner = owner;

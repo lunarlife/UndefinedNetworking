@@ -4,6 +4,6 @@ namespace UndefinedServer.Events.Player
 {
     public abstract class PlayerEvent : Event
     {
-        public abstract ServerPlayer Player { get; }
+        public abstract UndefinedServer.Player Player { get; }
     }
 }

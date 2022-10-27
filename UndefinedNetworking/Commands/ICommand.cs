@@ -4,7 +4,7 @@ namespace UndefinedNetworking.Commands
     {
         public string Prefix { get; }
         public string Description { get; }
-        public ParameterType[]? Parameters { get; }
+        public ParameterType[] Parameters { get; }
         
     }
 }
