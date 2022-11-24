@@ -48,3 +48,17 @@ D:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandar
 D:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.csproj.CopyComplete
 D:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.dll
 D:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.pdb
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\bin\Debug\netstandard2.1\UndefinedNetworking.deps.json
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\bin\Debug\netstandard2.1\UndefinedNetworking.dll
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\bin\Debug\netstandard2.1\UndefinedNetworking.pdb
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\bin\Debug\netstandard2.1\Networking.dll
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\bin\Debug\netstandard2.1\UECS.dll
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\bin\Debug\netstandard2.1\Utils.dll
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.csproj.AssemblyReference.cache
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.GeneratedMSBuildEditorConfig.editorconfig
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.AssemblyInfoInputs.cache
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.AssemblyInfo.cs
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.csproj.CoreCompileInputs.cache
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.csproj.CopyComplete
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.dll
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Debug\netstandard2.1\UndefinedNetworking.pdb

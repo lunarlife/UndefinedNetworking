@@ -1,23 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Networking;
-using Networking.DataConvert;
 using Networking.Packets;
 using UndefinedNetworking.Commands;
 using UndefinedNetworking.Gameplay.Chat;
 
 namespace UndefinedNetworking.Packets.Server
 {
-    [DataObject]
     public sealed class ServerInfoPacket : Packet
     {
-        [DataProperty]
         public int Tick { get; private set; }
-        [DataProperty]
         public Identifier Identifier { get; private set; }
-        [DataProperty]
         public ChatTypePacket[] Chats { get;  private set; }
-        [DataProperty]
         public CommandTypePacket[] Commands { get;  private set; }
         
         public ServerInfoPacket(int tick, Identifier identifier, IReadOnlyList<ChatType> chats, IReadOnlyList<ICommand> commands)
@@ -54,20 +48,18 @@ namespace UndefinedNetworking.Packets.Server
             
         }
         
-        [DataObject]
         public class ChatTypePacket
         {
-            [DataProperty] public string Name;
-            [DataProperty] public string DisplayName;
-            [DataProperty] public bool CanUseCommands;
-            [DataProperty] public bool CanWriteMessages;
+            public string Name;
+            public string DisplayName;
+            public bool CanUseCommands;
+            public bool CanWriteMessages;
         }
-        [DataObject]
         public class CommandTypePacket
         {
-            [DataProperty] public string Prefix;
-            [DataProperty] public string Description;
-            [DataProperty] public string[] ParametersTitles;
+            public string Prefix;
+            public string Description;
+            public string[] ParametersTitles;
         }
     }
 }

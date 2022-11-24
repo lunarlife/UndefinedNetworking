@@ -12,14 +12,14 @@ namespace UndefinedNetworking.Chats
 
         public ChatMessage(ISender sender, string text, Color color, ChatType chat)
         {
-            Title = sender.Name;
+            Title = sender.SenderName;
             Text = text;
             Color = color;
             Chat = chat;
         }
         public ChatMessage(ISender sender, string text, ChatType chat)
         {
-            Title = sender.Name;
+            Title = sender.SenderName;
             Text = text;
             Color = Color.White;
             Chat = chat;

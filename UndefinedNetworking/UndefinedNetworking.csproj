@@ -16,6 +16,9 @@
       <Reference Include="Networking">
         <HintPath>C:\Code\Frameworks\Networking.dll</HintPath>
       </Reference>
+      <Reference Include="UECS">
+        <HintPath>..\..\..\Code\Frameworks\UECS.dll</HintPath>
+      </Reference>
       <Reference Include="Utils">
         <HintPath>C:\Code\Frameworks\Utils.dll</HintPath>
       </Reference>
@@ -31,10 +34,6 @@
 
     <ItemGroup>
       <None Remove="obj\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Events\UI" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

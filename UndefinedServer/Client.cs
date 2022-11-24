@@ -8,7 +8,7 @@ using Utils.Events;
 
 namespace UndefinedServer
 {
-    public sealed class Client
+    internal sealed class Client
     {
         private Server _server;
         private RuntimePacketer _packeter;

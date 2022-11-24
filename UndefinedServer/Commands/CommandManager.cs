@@ -3,7 +3,6 @@ using System.Linq;
 using UndefinedNetworking;
 using UndefinedNetworking.Commands;
 using UndefinedNetworking.Exceptions;
-using UndefinedNetworking.Packets;
 using UndefinedNetworking.Packets.Command;
 using UndefinedServer.Chats;
 using UndefinedServer.Events;

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj": {}
+    "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj": {}
   },
   "projects": {
-    "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj": {
+    "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
+        "projectUniqueName": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
         "projectName": "UndefinedServer",
-        "projectPath": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
+        "projectPath": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
         "packagesPath": "C:\\Users\\ivana\\.nuget\\packages\\",
-        "outputPath": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\obj\\",
+        "outputPath": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

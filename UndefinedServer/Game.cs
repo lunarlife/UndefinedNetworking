@@ -5,6 +5,7 @@ using System.Threading;
 using Networking;
 using Networking.Loggers;
 using Networking.Packets;
+using UECS;
 using UndefinedNetworking;
 using UndefinedNetworking.Chats;
 using UndefinedNetworking.Packets.Player;
@@ -12,26 +13,52 @@ using UndefinedServer.Chats;
 using UndefinedServer.Events;
 using UndefinedServer.Events.Player;
 using UndefinedServer.Gameplay;
+using UndefinedServer.UI;
 using Utils;
 using Utils.Events;
+using Utils.Tasks;
 
 namespace UndefinedServer
 {
-    public sealed class Game
+    public sealed class Game : IEventCaller<UpdateEvent>
     {
+        private Thread? _updateThread; 
         private readonly Logger _logger;
+        private readonly SystemsController _systems = new();
         private readonly Dictionary<Identifier, Player> _players = new();
         public IReadOnlyList<Player> Players => _players.Values.ToList();
-
+        
         public World World { get; }
 
         internal Game(World world, Logger logger)
         {
             _logger = logger;
             World = world;
+            _systems.Add(new NetComponentSystem());
+            StartUpdateLoop();
             this.RegisterListener();
         }
 
+        private void StartUpdateLoop()
+        {
+            _updateThread = new Thread(() =>
+            {
+                while (Undefined.IsEnabled)
+                {
+                    Thread.Sleep(Undefined.ServerDefaultTick);
+                    Update();
+                }
+            })
+            {
+                Name = "Update loop"
+            };
+            _updateThread.Start();
+        } 
+        private void Update()
+        {
+            _systems.Update();
+            this.CallEvent(new UpdateEvent());
+        }
         [EventHandler]
         private void OnPacketReceive(PacketReceiveEvent e)
         {

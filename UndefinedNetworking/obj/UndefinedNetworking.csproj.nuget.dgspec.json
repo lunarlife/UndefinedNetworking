@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj": {}
+    "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj": {}
   },
   "projects": {
-    "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj": {
+    "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj",
+        "projectUniqueName": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj",
         "projectName": "UndefinedNetworking",
-        "projectPath": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj",
+        "projectPath": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\UndefinedNetworking.csproj",
         "packagesPath": "C:\\Users\\ivana\\.nuget\\packages\\",
-        "outputPath": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\obj\\",
+        "outputPath": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedNetworking\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0siaaQI+K7uhvmHnsv3tRzU5aaHsO1J/A7aEBkMMeVZz7js7iyqaunf0EfbNczhkGGGvVXHlDOLXWLymvvTQow==",
+  "dgSpecHash": "GLrSdzx36Y7AG6sLT1iGW7zq6modpTF/6/luLd/lgHi12luuKgcNE33BuWAdTVfO5PXc3zriLVzwGBrB/Wlrfw==",
   "success": true,
-  "projectFilePath": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
+  "projectFilePath": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ivana\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
   ],

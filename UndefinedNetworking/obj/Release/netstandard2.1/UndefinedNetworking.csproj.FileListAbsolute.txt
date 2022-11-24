@@ -9,3 +9,10 @@ C:\Code\Undefined\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandar
 C:\Code\Undefined\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.csproj.CopyComplete
 C:\Code\Undefined\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.dll
 C:\Code\Undefined\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.pdb
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.csproj.AssemblyReference.cache
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.GeneratedMSBuildEditorConfig.editorconfig
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.AssemblyInfoInputs.cache
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.AssemblyInfo.cs
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.csproj.CoreCompileInputs.cache
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.dll
+C:\UndefinedProject\UndefinedNetworking\UndefinedNetworking\obj\Release\netstandard2.1\UndefinedNetworking.pdb

@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine.Objects;
 
-public interface IGameObject : IObjectCore
+public interface IGameObject
 {
     public ITransform Transform { get; }
 

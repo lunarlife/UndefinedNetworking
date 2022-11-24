@@ -1,4 +1,4 @@
-using UndefinedNetworking.GameEngine.UI.Windows;
+using UndefinedNetworking.GameEngine.UI.Elements.Enums;
 
 namespace UndefinedNetworking.GameEngine.UI.Elements.Structs
 {

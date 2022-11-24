@@ -25,7 +25,7 @@ namespace UndefinedServer
     public class Undefined
     {
         private static Undefined? _instance;
-        private static ServerConfigurationFile _serverConfiguration;
+        private static ServerConfiguration _serverConfiguration;
         private static readonly int _clientInfoWaitTime = 1000;
         private static readonly Version _version = new("0.1alpha");
         
@@ -39,6 +39,7 @@ namespace UndefinedServer
         public static Logger Logger => _logger;
 
         public static Game CurrentGame => _currentGame;
+        public static int ServerDefaultTick => _serverConfiguration.Tick;
 
         public Undefined()
         {
@@ -54,9 +55,9 @@ namespace UndefinedServer
             AppDomain.CurrentDomain.Load("UndefinedNetworking");
             AppDomain.CurrentDomain.Load("Utils");
             Logger.Info("Loading configurations...");
-            if (Configuration.LoadConfiguration<ServerConfigurationFile>() is not { } configuration)
+            if (Configuration.LoadConfiguration<ServerConfiguration>() is not { } configuration)
             {
-                configuration = new ServerConfigurationFile
+                configuration = new ServerConfiguration
                 {
                     Tick = 10,
                     Port = 2402,
@@ -76,7 +77,7 @@ namespace UndefinedServer
                     var split = st.Split(' ');
                     var prefix = split[0];
                     if(!CommandManager.TryGetCommand(prefix, out var command))return;
-                    //command.Execute();
+                    //TODO: execute command
                 }
             }).Start();
             StartupServer(new MainServerLogger());
@@ -134,11 +135,11 @@ namespace UndefinedServer
             _server.OpenServer(address, _serverConfiguration.Port);
             RuntimePacketer.IsSenderWorking = true;
             RuntimePacketer.IsThreadPoolWorking = true;
+            IsEnabled = true;
             _currentGame = new Game(new World("world", 1), _logger);
-            var operation = new AsyncOperationInfo<string>(60);
+            var operation = new AsyncOperationInfo<string>(10);
             Plugin.LoadAllPlugins(operation);
             operation.Wait(s => Logger.Info(s));
-            IsEnabled = true;
         }
 
         [EventHandler]

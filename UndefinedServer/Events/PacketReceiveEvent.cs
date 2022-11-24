@@ -6,9 +6,9 @@ namespace UndefinedServer.Events
     public class PacketReceiveEvent : Event
     {
         public Packet Packet { get; }
-        public Client Client { get; }
+        internal Client Client { get; }
 
-        public PacketReceiveEvent(Packet packet, Client client)
+        internal PacketReceiveEvent(Packet packet, Client client)
         {
             Packet = packet;
             Client = client;
