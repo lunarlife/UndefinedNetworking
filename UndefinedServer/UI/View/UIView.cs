@@ -31,9 +31,7 @@ public class UIView : ObjectCore, IUIView
             parameters.Layer, parameters.Margins, parameters.OriginalRect, parameters.Pivot, parameters.Bind);
         foreach (var c in element.Components)
         {
-            var component = c with { };
             AddComponent(c.GetType());
-
         }
         _childs = element.Childs.Select(ch => new UIView(ch, viewer, this)).ToList();
     }
