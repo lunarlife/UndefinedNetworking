@@ -1,6 +1,6 @@
 using Utils.Events;
 
-namespace UndefinedServer.Events.Player
+namespace UndefinedServer.Events.PlayerEvents
 {
     public abstract class PlayerEvent : Event
     {

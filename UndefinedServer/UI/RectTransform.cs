@@ -65,7 +65,7 @@ public class RectTransform : IRectTransform
     }
     public int Layer { get; set; }
 
-    public IReadOnlyList<RectTransform> Childs => _childs;
+    public IReadOnlyList<IRectTransform> Childs => _childs;
 
     public Side Pivot
     {

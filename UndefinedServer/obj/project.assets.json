@@ -54,11 +54,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
+      "projectUniqueName": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
       "projectName": "UndefinedServer",
-      "projectPath": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
+      "projectPath": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\UndefinedServer.csproj",
       "packagesPath": "C:\\Users\\ivana\\.nuget\\packages\\",
-      "outputPath": "C:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\obj\\",
+      "outputPath": "D:\\UndefinedProject\\UndefinedNetworking\\UndefinedServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

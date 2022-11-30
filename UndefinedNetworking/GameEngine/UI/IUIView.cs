@@ -16,6 +16,6 @@ public interface IUIView
     public T? AddComponent<T>() where T : UIComponent, new() => AddComponent(typeof(T)) as T;
     public UIComponent? AddComponent(Type type);
     public T? GetComponentOfType<T>() where T : UIComponent => GetComponentOfType(typeof(T)) as T;
-
+    public void Destroy();
     public UIComponent? GetComponentOfType(Type type);
 }

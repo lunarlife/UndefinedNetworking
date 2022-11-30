@@ -1,5 +1,4 @@
 ﻿using Networking;
-using Networking.DataConvert;
 using Networking.Packets;
 
 namespace UndefinedNetworking.Packets.Player

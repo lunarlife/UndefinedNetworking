@@ -5,8 +5,6 @@ using Networking.DataConvert;
 using UECS;
 using UndefinedNetworking.GameEngine;
 using UndefinedNetworking.GameEngine.UI.Components;
-using UndefinedNetworking.GameEngine.UI.Components.Mouse;
-using UndefinedNetworking.Gameplay;
 using UndefinedNetworking.Packets.UI;
 
 namespace UndefinedServer.UI;
@@ -33,7 +31,7 @@ public class NetComponentSystem : ISystem, IDynamicDataConverter
     }
 
     public Type Type => typeof(INetworkComponent);
-    byte[] IDynamicDataConverter.Serialize(object o)
+    public byte[] Serialize(object o)
     {
         var nc = (INetworkComponent)o;
         var serialize = nc.IsNetInitialized
@@ -46,7 +44,7 @@ public class NetComponentSystem : ISystem, IDynamicDataConverter
         return buffer;
     }
 
-    object? IDynamicDataConverter.Deserialize(byte[] data, Type type)
+    public object? Deserialize(byte[] data, Type type)
     {
         var identifier = DataConverter.Deserialize<Identifier>(data);
         return _ui.FirstOrDefault(nc => nc.Get1().NetIdentifier == identifier);

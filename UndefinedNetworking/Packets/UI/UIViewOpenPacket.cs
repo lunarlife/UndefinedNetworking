@@ -1,6 +1,5 @@
 using Networking;
 using Networking.Packets;
-using UndefinedNetworking.GameEngine;
 using UndefinedNetworking.GameEngine.UI;
 using UndefinedNetworking.GameEngine.UI.Components;
 

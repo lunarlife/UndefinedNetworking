@@ -14,6 +14,6 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CCode_005CUndefined_005CUndefinedNetworking_005CUndefinedServer_005Cbin_005CRelease_005Cnet6_002E0_005Cpublish_005CUndefinedServer_002Eexe/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CCode_005CUndefined_005CUndefinedNetworking_005CUndefinedServer_005Cbin_005CRelease_005Cnet6_002E0_005CUndefinedServer_002Eexe/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
-  &lt;Assembly Path="C:\Code\Undefined\UndefinedNetworking\ServerPlugin\bin\Release\net6.0\ServerPlugin.dll" /&gt;&#xD;
-  &lt;Assembly Path="D:\Code\UndefinedNetworking\UndefinedServer\bin\Debug\net6.0\Utils.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Code\Frameworks\Networking.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Program Files\dotnet\shared\Microsoft.NETCore.App\3.1.26\netstandard.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

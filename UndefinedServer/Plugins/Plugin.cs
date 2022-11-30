@@ -62,7 +62,7 @@ namespace UndefinedServer.Plugins
                 throw new PluginLoadException(filePath, $"Unknown error, message: {e.Message}");
             }
         }
-        public static async void LoadAllPlugins(AsyncOperationInfo<string> operation)
+        internal static async void LoadAllPlugins(AsyncOperationInfo<string> operation)
         {
             operation.Start("Loading plugins...");
             await Task.Run(() =>

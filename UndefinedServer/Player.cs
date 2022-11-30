@@ -7,11 +7,14 @@ using UndefinedNetworking.GameEngine.UI;
 using UndefinedNetworking.Gameplay;
 using UndefinedNetworking.Packets.Player;
 using UndefinedNetworking.Packets.World;
+using UndefinedServer.Events.PlayerEvents;
+using UndefinedServer.Pings;
 using UndefinedServer.UI.View;
+using Utils.Events;
 
 namespace UndefinedServer
 {
-    public class Player : IPlayer
+    public class Player : IPlayer, IEventCaller<PlayerDisconnectedEvent>
     {
         private readonly Client _client;
         private Game? _currentGame;
@@ -20,8 +23,9 @@ namespace UndefinedServer
         public string Nickname { get; }
         public string SenderName => Nickname;
         public IEnumerable<IUIView> ViewElements => _elements;
-
-
+        
+        public Ping NetworkPing { get; }
+        public Ping TotalPing { get; }
         public Game? CurrentGame
         {
             get => _currentGame;
@@ -36,8 +40,19 @@ namespace UndefinedServer
         
         internal Player(Client client, string nickname)
         {
+            NetworkPing = new NetworkPing(this);
+            TotalPing = new TotalPing(this);
             Nickname = nickname;
             _client = client;
+            _client.OnDisconnect += OnClientDisconnect;
+
+        }
+
+        private void OnClientDisconnect(DisconnectCause cause, string message)
+        {
+            this.CallEvent(new PlayerDisconnectedEvent(this, cause, message));
+            NetworkPing.Dispose();
+            TotalPing.Dispose();
         }
 
         public void Kick(string message)

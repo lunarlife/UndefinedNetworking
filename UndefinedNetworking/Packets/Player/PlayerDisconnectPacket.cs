@@ -14,10 +14,5 @@ namespace UndefinedNetworking.Packets.Player
             Cause = cause;
             Message = message;
         }
-
-        private PlayerDisconnectPacket()
-        {
-            
-        }
     }
 }

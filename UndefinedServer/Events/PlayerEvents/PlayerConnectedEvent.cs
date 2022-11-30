@@ -1,4 +1,4 @@
-namespace UndefinedServer.Events.Player
+namespace UndefinedServer.Events.PlayerEvents
 {
     public class PlayerConnectedEvent : PlayerEvent
     {

@@ -41,6 +41,8 @@ namespace UndefinedServer
         public static Game CurrentGame => _currentGame;
         public static int ServerDefaultTick => _serverConfiguration.Tick;
 
+        public static ServerConfiguration ServerConfiguration => _serverConfiguration;
+
         public Undefined()
         {
             if (_instance is not null)
@@ -52,8 +54,11 @@ namespace UndefinedServer
         private static void LoadAll()
         {
             Logger.Info("Loading assemblies...");
-            AppDomain.CurrentDomain.Load("UndefinedNetworking");
             AppDomain.CurrentDomain.Load("Utils");
+            AppDomain.CurrentDomain.Load("UECS");
+            AppDomain.CurrentDomain.Load("Networking");
+            AppDomain.CurrentDomain.Load("UndefinedNetworking");
+            //ShowTypeCountInfo();
             Logger.Info("Loading configurations...");
             if (Configuration.LoadConfiguration<ServerConfiguration>() is not { } configuration)
             {
@@ -61,12 +66,28 @@ namespace UndefinedServer
                 {
                     Tick = 10,
                     Port = 2402,
-                    IP = "127.0.0.1"
+                    IP = "127.0.0.1",
+                    IsDebugEnabled = false,
+                    MaxPlayerPing = 500,
+                    PingCheckDelay = 1000,
+                    MaxPingInvalidRequests = 3
+                    
                 };
                 configuration.Save();
             }
             _serverConfiguration = configuration;
         }
+
+        private static void ShowTypeCountInfo()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                if (assembly.GetName().Name is "UndefinedNetworking" or "Networking" or "Utils" or "UECS")
+                    Logger.Info(assembly.GetName().Name + "    types count: " + assembly.GetTypes().Length);
+            }
+        }
+
         private static void Main()
         {
             new Thread(() =>
@@ -133,6 +154,7 @@ namespace UndefinedServer
                 throw new ServerConfigurationException("invalid IP address");
             }
             _server.OpenServer(address, _serverConfiguration.Port);
+            Logger.Info($"Server opened on {address.MapToIPv4()}:{_serverConfiguration.Port}");
             RuntimePacketer.IsSenderWorking = true;
             RuntimePacketer.IsThreadPoolWorking = true;
             IsEnabled = true;
@@ -151,7 +173,7 @@ namespace UndefinedServer
                 _waitedClients.Remove(e.Client);
                 if (packet.Version != _version)
                 {
-                    e.Client.Disconnect(DisconnectCause.InvalidVersion, "you has invalid version");
+                    e.Client.Disconnect(DisconnectCause.InvalidVersion, "invalid version");
                     return;
                 }
                 e.Client.SendPacket(new ServerInfoPacket(_serverConfiguration.Tick, e.Client.Identifier, ChatManager.Chats, CommandManager.Commands));

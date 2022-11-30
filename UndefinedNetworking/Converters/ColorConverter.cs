@@ -1,6 +1,5 @@
 using System;
 using Networking.DataConvert;
-using Networking.DataConvert.Datas;
 using Utils;
 
 namespace UndefinedNetworking.Converters
@@ -9,7 +8,7 @@ namespace UndefinedNetworking.Converters
     {
         public Type Type => typeof(Color);
         public ushort Length => 4;
-        byte[] IStaticDataConverter.Serialize(object o)
+        public byte[] Serialize(object o)
         {
             var color = (Color)o;
             var buffer = new[]
@@ -21,7 +20,7 @@ namespace UndefinedNetworking.Converters
             };
             return buffer; 
         }
-        object IStaticDataConverter.Deserialize(byte[] data, Type currenType) =>
+        public object Deserialize(byte[] data, Type currenType) =>
             new Color(data[0], data[1], data[2], data[3]);
     }
 }

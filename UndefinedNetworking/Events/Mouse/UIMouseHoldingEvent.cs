@@ -9,5 +9,4 @@ public class UIMouseHoldingEvent : UIMouseEvent
     {
         View = view;
     }
-
 }

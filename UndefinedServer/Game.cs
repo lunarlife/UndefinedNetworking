@@ -11,12 +11,11 @@ using UndefinedNetworking.Chats;
 using UndefinedNetworking.Packets.Player;
 using UndefinedServer.Chats;
 using UndefinedServer.Events;
-using UndefinedServer.Events.Player;
+using UndefinedServer.Events.PlayerEvents;
 using UndefinedServer.Gameplay;
 using UndefinedServer.UI;
 using Utils;
 using Utils.Events;
-using Utils.Tasks;
 
 namespace UndefinedServer
 {
@@ -26,7 +25,7 @@ namespace UndefinedServer
         private readonly Logger _logger;
         private readonly SystemsController _systems = new();
         private readonly Dictionary<Identifier, Player> _players = new();
-        public IReadOnlyList<Player> Players => _players.Values.ToList();
+        public IEnumerable<Player> Players => _players.Values;
         
         public World World { get; }
 
@@ -56,6 +55,22 @@ namespace UndefinedServer
         } 
         private void Update()
         {
+            foreach (var player in from player in _players.Values
+                     let time = DateTime.Now
+                     where (time - player.NetworkPing.LastPingUpdate).TotalMilliseconds >=
+                           Undefined.ServerConfiguration.PingCheckDelay
+                     select player)
+            {
+                var networkPing = player.NetworkPing;
+                var totalPing = player.TotalPing;
+                if (networkPing.InvalidRequestsCount >= Undefined.ServerConfiguration.MaxPingInvalidRequests || totalPing.InvalidRequestsCount >= Undefined.ServerConfiguration.MaxPingInvalidRequests)
+                {
+                    player.Client.Disconnect(DisconnectCause.TimeOut, "Invalid ping requests count");
+                    continue;
+                }
+                totalPing.Update();
+                networkPing.Update();
+            }
             _systems.Update();
             this.CallEvent(new UpdateEvent());
         }
@@ -71,18 +86,23 @@ namespace UndefinedServer
                     var player = _players[identifier];
                     SendGamePacket(player, new PlayerDisconnectPacket(identifier, pdp.Cause, pdp.Message));
                     e.Client.Disconnect(pdp.Cause, pdp.Message);
-                    _players.Remove(identifier);
-                    _logger.Info($"Player {player.Nickname} with id {identifier}: {pdp.Message}");
                     break;
                 }
             }
         }
-        
+
+        [EventHandler]
+        private void OnPlayerDisconnected(PlayerDisconnectedEvent e)
+        {
+            var player = e.Player;
+            _players.Remove(player.Identifier);
+            _logger.Info($"Player {player.Nickname} with id {player.Identifier}: {e.Message}");
+        }
         public void SaveAll()
         {
             //TODO: do it
         }
-        public void ConnectPlayer(Player player)
+        internal void ConnectPlayer(Player player)
         {
             player.CurrentGame = this;
             _players.Add(player.Identifier, player);

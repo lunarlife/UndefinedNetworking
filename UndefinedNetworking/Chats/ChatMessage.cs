@@ -24,13 +24,14 @@ namespace UndefinedNetworking.Chats
             Color = Color.White;
             Chat = chat;
         }
-        public ChatMessage(string title, string text, ChatType chat)
+        public ChatMessage(string title, string text, ChatType chat, Color? color = null)
         {
             Title = title;
             Text = text;
-            Color = Color.White;
+            Color = color ?? Color.Black;
             Chat = chat;
         }
+        
         public static implicit operator string(ChatMessage message) => message.Text;
     }
 }
