@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine;
 
-public enum Side : byte
+public enum Side
 {
     TopLeft,
     Top,

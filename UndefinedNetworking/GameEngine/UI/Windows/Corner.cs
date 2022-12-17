@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine.UI.Windows;
 
-public enum Corner : byte
+public enum Corner
 {
     TopLeft,
     TopRight,

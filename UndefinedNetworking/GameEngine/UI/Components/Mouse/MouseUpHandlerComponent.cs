@@ -3,7 +3,7 @@ using UndefinedNetworking.GameEngine.Input;
 
 namespace UndefinedNetworking.GameEngine.UI.Components.Mouse;
     
-public record MouseUpHandlerComponent : MouseHandlerComponent<UIMouseEnterEvent>
+public sealed record MouseUpHandlerComponent : MouseHandlerComponent<UIMouseUpEvent>
 {
-    public MouseKey Keys { get; }
+    [ClientData] public MouseKey Keys { get; set; }
 }

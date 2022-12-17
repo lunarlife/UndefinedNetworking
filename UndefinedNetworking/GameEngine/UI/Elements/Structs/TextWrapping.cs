@@ -4,9 +4,13 @@ namespace UndefinedNetworking.GameEngine.UI.Elements.Structs
 {
     public struct TextWrapping
     {
-        public TextOverflow Overflow { get; set; }
-        public bool IsWrapping { get; set; }
-        public TextAlignment Alignment { get; set; }
-        
+        public TextWrapping()
+        {
+        }
+
+        public TextOverflow Overflow { get; set; } = TextOverflow.Overflow;
+        public bool IsWrapping { get; set; } = false;
+        public TextAlignment Alignment { get; set; } = TextAlignment.TopLeft;
+
     }
 }

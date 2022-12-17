@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using UndefinedNetworking.Gameplay.Colonies;
 using UndefinedNetworking.Gameplay.Entities.LivingEntities.Humans;
 using UndefinedNetworking.Types;
 using Utils.Dots;
 
 namespace UndefinedServer.Gameplay
 {
-    public class ServerColony : IColony
+    public class ServerColony 
     {
         public Player Owner { get; }
 

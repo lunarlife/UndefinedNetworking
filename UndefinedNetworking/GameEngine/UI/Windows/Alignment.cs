@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine.UI.Windows;
 
-public enum Alignment : byte
+public enum Alignment
 {
     TopLeft,
     TopCenter,

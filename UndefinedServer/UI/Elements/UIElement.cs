@@ -9,11 +9,13 @@ public abstract class UIElement : IUIElement
     private readonly List<UIElement> _childs = new();
     public IUIElement? Parent { get; }
     public IEnumerable<IUIElement> Childs => _childs;
-    public abstract IEnumerable<UIComponent> Components { get; }
     public abstract ViewParameters CreateNewView(IUIViewer viewer);
+ 
     public UIElement(UIElement? parent)
     {
         Parent = parent;
         parent?._childs.Add(this);
     }
+    public virtual void OnCreateView(IUIView view) { }
+
 }

@@ -4,9 +4,13 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Networking;
+using Networking.DataConvert;
+using Networking.DataConvert.DataUse;
 using Networking.Events;
 using Networking.Loggers;
 using UndefinedNetworking;
+using UndefinedNetworking.Converters;
+using UndefinedNetworking.GameEngine;
 using UndefinedNetworking.Packets.Server;
 using UndefinedServer.Chats;
 using UndefinedServer.Commands;
@@ -26,7 +30,7 @@ namespace UndefinedServer
     {
         private static Undefined? _instance;
         private static ServerConfiguration _serverConfiguration;
-        private static readonly int _clientInfoWaitTime = 1000;
+        private static readonly int _clientInfoWaitTime = 4000;
         private static readonly Version _version = new("0.1alpha");
         
         private static Server _server;
@@ -59,6 +63,7 @@ namespace UndefinedServer
             AppDomain.CurrentDomain.Load("Networking");
             AppDomain.CurrentDomain.Load("UndefinedNetworking");
             //ShowTypeCountInfo();
+            NetworkData.LoadNetworkData();
             Logger.Info("Loading configurations...");
             if (Configuration.LoadConfiguration<ServerConfiguration>() is not { } configuration)
             {

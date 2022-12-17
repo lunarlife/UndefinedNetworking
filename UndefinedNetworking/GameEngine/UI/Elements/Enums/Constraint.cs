@@ -1,6 +1,6 @@
-namespace UndefinedNetworking.GameEngine.UI;
+namespace UndefinedNetworking.GameEngine.UI.Elements.Enums;
 
-public enum Constraint : byte
+public enum Constraint
 {
     Flexible,
     FixedColumnCount,

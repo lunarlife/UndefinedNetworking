@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine.UI.Elements.Enums;
 
-public enum TextAlignment : byte
+public enum TextAlignment
 {
     Top,
     Bottom,

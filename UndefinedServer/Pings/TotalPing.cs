@@ -21,7 +21,7 @@ public class TotalPing : Ping, IEventCaller<TotalPingUpdateEvent>
     public override void Update()
     {
         _lastPingUpdate = DateTime.Now;
-        _player.Client.SendPacketNow(new ClientPingPacket());
+        _player.Client.SendPacket(new ClientPingPacket());
         _invalidRequestsCount++;
     }
 

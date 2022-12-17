@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using Networking;
 using Networking.Packets;
@@ -38,13 +39,19 @@ namespace UndefinedServer
 
         internal void Disconnect(DisconnectCause cause, string message)
         {
-            _packeter.SendPacketNow(new PlayerDisconnectPacket(Identifier, cause, message));
-            _packeter.IsSending = false;
-            _packeter.IsReading = false;
-            _server.Close();
-            _server = null;
-            _packeter = null;
-            OnDisconnect?.Invoke(cause, message);
+            try
+            {
+                _packeter.SendPacketNow(new PlayerDisconnectPacket(Identifier, cause, message));
+            }
+            finally
+            {
+                _packeter.IsSending = false;
+                _packeter.IsReading = false;
+                _server.Close();
+                _server = null;
+                _packeter = null;
+                OnDisconnect?.Invoke(cause, message);
+            }
         }
         
         private void OnReceive(Packet packet)

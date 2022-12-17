@@ -5,6 +5,16 @@ namespace UndefinedNetworking.GameEngine.UI;
 
 public struct ViewParameters
 {
+    public ViewParameters()
+    {
+        Margins = default;
+        OriginalRect = default;
+        Pivot = Side.TopLeft;
+        Bind = default;
+        Layer = 0;
+        IsActive = true;
+    }
+
     public Margins Margins { get; set; }
     public Rect OriginalRect { get; set; }
     public Side Pivot { get; set; }

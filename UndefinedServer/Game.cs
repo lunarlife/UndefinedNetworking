@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Networking;
+using Networking.DataConvert;
 using Networking.Loggers;
 using Networking.Packets;
 using UECS;
@@ -29,11 +30,16 @@ namespace UndefinedServer
         
         public World World { get; }
 
+        public SystemsController Systems => _systems;
+
         internal Game(World world, Logger logger)
         {
             _logger = logger;
             World = world;
-            _systems.Add(new NetComponentSystem());
+            var netSystem = new NetComponentSystem();
+            DataConverter.AddDynamicConverter(netSystem);
+            _systems.Register(netSystem);
+            _systems.Register(new MouseHandlersSystem());
             StartUpdateLoop();
             this.RegisterListener();
         }
@@ -71,7 +77,8 @@ namespace UndefinedServer
                 totalPing.Update();
                 networkPing.Update();
             }
-            _systems.Update();
+            _systems.UpdateSync();
+            _systems.UpdateAsync();
             this.CallEvent(new UpdateEvent());
         }
         [EventHandler]
@@ -96,7 +103,7 @@ namespace UndefinedServer
         {
             var player = e.Player;
             _players.Remove(player.Identifier);
-            _logger.Info($"Player {player.Nickname} with id {player.Identifier}: {e.Message}");
+            _logger.Info($"Player {player.Nickname} with id {player.Identifier} left the game");
         }
         public void SaveAll()
         {
@@ -109,9 +116,7 @@ namespace UndefinedServer
             _logger.Info($"Player {player.Nickname} with id {player.Identifier} joined");
             SendGamePacket(player, new PlayerConnectPacket(player.Identifier, player.Nickname));
             EventManager.CallEvent(new PlayerConnectedEvent(player));
-            
-            
-            if(ChatManager.DebugChatIsEnabled) player.SendMessage(new ChatMessage(ServerSender.Instance, "sosi hui ebalai", Color.DarkRed, ChatManager.GetChat("debug")));
+//            if(ChatManager.DebugChatIsEnabled) player.SendMessage(new ChatMessage(ServerSender.Instance, "sosi hui ebalai", Color.DarkRed, ChatManager.GetChat("debug")));
         }
 
         public void Stop()

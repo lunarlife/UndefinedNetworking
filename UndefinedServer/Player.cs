@@ -1,11 +1,15 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Networking;
+using Networking.DataConvert;
 using UndefinedNetworking;
 using UndefinedNetworking.Chats;
+using UndefinedNetworking.Exceptions;
 using UndefinedNetworking.GameEngine.UI;
+using UndefinedNetworking.GameEngine.UI.Components;
 using UndefinedNetworking.Gameplay;
 using UndefinedNetworking.Packets.Player;
+using UndefinedNetworking.Packets.UI;
 using UndefinedNetworking.Packets.World;
 using UndefinedServer.Events.PlayerEvents;
 using UndefinedServer.Pings;
@@ -18,12 +22,15 @@ namespace UndefinedServer
     {
         private readonly Client _client;
         private Game? _currentGame;
-        private readonly List<UIView> _elements = new();
+        private readonly List<IUIView> _elements = new();
+        private bool _isOnline;
         public Identifier Identifier => _client.Identifier;
         public string Nickname { get; }
         public string SenderName => Nickname;
         public IEnumerable<IUIView> ViewElements => _elements;
-        
+
+        public bool IsOnline => _isOnline;
+
         public Ping NetworkPing { get; }
         public Ping TotalPing { get; }
         public Game? CurrentGame
@@ -45,12 +52,14 @@ namespace UndefinedServer
             Nickname = nickname;
             _client = client;
             _client.OnDisconnect += OnClientDisconnect;
-
+            _isOnline = true;
+            foreach (var view in _elements) view.Close();
         }
 
         private void OnClientDisconnect(DisconnectCause cause, string message)
         {
             this.CallEvent(new PlayerDisconnectedEvent(this, cause, message));
+            _isOnline = false;
             NetworkPing.Dispose();
             TotalPing.Dispose();
         }
@@ -67,19 +76,28 @@ namespace UndefinedServer
         public IUIView Open(IUIElement element)
         {
             var view = new UIView(element, this, null);
-           // var netComponents = view.Components.Select(component => Component.ToNetComponent(component, view)).ToArray();
-            //_client.SendPacket(new UIViewOpenPacket(parameters, ));
-            return null;
+            var transform = view.Transform;
+            var packet = new UIViewOpenPacket(view.Components.Where(c => c is UINetworkComponent).Cast<UINetworkComponent>().ToArray(), new ViewParameters
+            {
+                Bind = transform.Bind,
+                Layer = transform.Layer,
+                Margins = transform.Margins,
+                Pivot = transform.Pivot,
+                IsActive = transform.IsActive,
+                OriginalRect = transform.OriginalRect
+            }, view.Identifier);
+            _elements.Add(view);
+            _client.SendPacket(packet);
+            return view;
         }
 
         public void Close(IUIView view)
         {
-            throw new NotImplementedException();
-        }
-        
-        void IUIViewer.OnUpdateView(IUIView view)
-        {
-            
+            if (!_elements.Contains(view))
+                throw new ViewException("current view not opened on player");
+            _elements.Remove(view);
+            if(_isOnline)
+                _client.SendPacket(new UIViewClosePacket(view.Identifier));
         }
     }
 }

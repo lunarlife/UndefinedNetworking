@@ -1,6 +1,6 @@
 using System;
 
-namespace UndefinedServer.Exeptions;
+namespace UndefinedNetworking.Exceptions;
 
 public class ViewException : Exception
 {

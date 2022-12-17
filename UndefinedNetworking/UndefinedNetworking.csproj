@@ -36,10 +36,6 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Packets\UI\Components" />
-    </ItemGroup>
-
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="xcopy /y /d  &quot;$(ProjectDir)$(OutDir)\UndefinedNetworking.dll&quot; &quot;C:\Code\Frameworks&quot;&#xA;xcopy /y /d  &quot;$(ProjectDir)$(OutDir)\UndefinedNetworking.dll&quot; &quot;D:\UndefinedProject\Undefined\Assets\Plugins&quot;" />
     </Target>

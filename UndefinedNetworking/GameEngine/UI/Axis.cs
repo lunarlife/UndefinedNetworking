@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine.UI;
 
-public enum Axis : byte
+public enum Axis
 {
     Horizontal,
     Vertical

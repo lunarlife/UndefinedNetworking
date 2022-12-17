@@ -6,8 +6,8 @@ namespace UndefinedNetworking.GameEngine.UI.Components.Mouse;
 
 public abstract record MouseHandlerComponent<T> : UINetworkComponent, IEventCaller<T> where T : UIMouseEvent
 {
-    public Action<T> EventHandler
+    internal MouseHandlerComponent()
     {
-        init => EventManager.RegisterEvent(this, value);
+        
     }
 }

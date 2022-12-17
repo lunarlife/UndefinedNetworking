@@ -3,8 +3,9 @@ using UndefinedNetworking.GameEngine.Input;
 
 namespace UndefinedNetworking.GameEngine.UI.Components.Mouse;
 
-public record MouseDownHandlerComponent : MouseHandlerComponent<UIMouseDownEvent>
+public sealed record MouseDownHandlerComponent : MouseHandlerComponent<UIMouseDownEvent>
 {
-    public MouseKey Keys { get; init; }
+    [ClientData] public MouseKey Keys { get; set; }
+
 }
 

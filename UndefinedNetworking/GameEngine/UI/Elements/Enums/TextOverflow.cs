@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine.UI.Elements.Enums;
 
-public enum TextOverflow : byte
+public enum TextOverflow
 {
     Overflow,
     Ellipsis,

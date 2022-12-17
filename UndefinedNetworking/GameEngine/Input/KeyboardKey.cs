@@ -1,6 +1,6 @@
 namespace UndefinedNetworking.GameEngine.Input;
 
-public enum KeyboardKey : byte
+public enum KeyboardKey
 {
     A,
     B,

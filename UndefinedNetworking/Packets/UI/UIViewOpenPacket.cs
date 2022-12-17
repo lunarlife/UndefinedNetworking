@@ -1,4 +1,6 @@
+using System;
 using Networking;
+using Networking.DataConvert;
 using Networking.Packets;
 using UndefinedNetworking.GameEngine.UI;
 using UndefinedNetworking.GameEngine.UI.Components;
@@ -16,8 +18,5 @@ public class UIViewOpenPacket : Packet
         Components = components;
         Parameters = parameters;
         Identifier = identifier;
-    }
-    private UIViewOpenPacket()
-    {
     }
 }
