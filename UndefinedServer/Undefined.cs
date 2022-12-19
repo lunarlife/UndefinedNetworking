@@ -163,7 +163,7 @@ namespace UndefinedServer
             RuntimePacketer.IsSenderWorking = true;
             RuntimePacketer.IsThreadPoolWorking = true;
             IsEnabled = true;
-            _currentGame = new Game(new World("world", 1), _logger);
+            _currentGame = new Game(new GameWorld("world", 1), _logger);
             var operation = new AsyncOperationInfo<string>(10);
             Plugin.LoadAllPlugins(operation);
             operation.Wait(s => Logger.Info(s));

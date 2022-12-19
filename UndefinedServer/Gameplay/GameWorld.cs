@@ -1,11 +1,11 @@
 namespace UndefinedServer.Gameplay
 {
-    public class World
+    public class GameWorld
     {
         public string Name { get; }
         public int Seed { get; }
 
-        public World(string name, int seed)
+        public GameWorld(string name, int seed)
         {
             Name = name;
             Seed = seed;

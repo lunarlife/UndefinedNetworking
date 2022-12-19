@@ -28,11 +28,11 @@ namespace UndefinedServer
         private readonly Dictionary<Identifier, Player> _players = new();
         public IEnumerable<Player> Players => _players.Values;
         
-        public World World { get; }
+        public GameWorld World { get; }
 
         public SystemsController Systems => _systems;
 
-        internal Game(World world, Logger logger)
+        internal Game(GameWorld world, Logger logger)
         {
             _logger = logger;
             World = world;
