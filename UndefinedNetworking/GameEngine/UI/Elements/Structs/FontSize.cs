@@ -5,7 +5,7 @@ namespace UndefinedNetworking.GameEngine.UI.Elements.Structs
 {
     public struct FontSize
     {
-        private float _minSize;
+        private float _minSize = 24;
         private float _maxSize;
         private float _characterWidthAdjustment;
         private float _characterSpacing;
@@ -88,6 +88,11 @@ namespace UndefinedNetworking.GameEngine.UI.Elements.Structs
             _characterWidthAdjustment = 0;
             _lineSpacing = 0;
             AutoSize = false;
+        }
+
+        public FontSize() : this(24)
+        {
+            
         }
     }
 }

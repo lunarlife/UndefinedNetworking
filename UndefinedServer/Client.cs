@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using Networking;
 using Networking.Packets;

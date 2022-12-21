@@ -5,7 +5,6 @@ using Networking.DataConvert;
 using UECS;
 using UndefinedNetworking.GameEngine;
 using UndefinedNetworking.GameEngine.UI.Components;
-using UndefinedNetworking.GameEngine.UI.Components.Mouse;
 
 namespace UndefinedServer.UI;
 

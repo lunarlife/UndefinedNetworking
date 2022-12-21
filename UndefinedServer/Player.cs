@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Linq;
 using Networking;
-using Networking.DataConvert;
 using UndefinedNetworking;
 using UndefinedNetworking.Chats;
-using UndefinedNetworking.Exceptions;
+using UndefinedNetworking.Events.UIEvents;
+using UndefinedNetworking.GameEngine.Scenes;
 using UndefinedNetworking.GameEngine.UI;
 using UndefinedNetworking.GameEngine.UI.Components;
 using UndefinedNetworking.Gameplay;
@@ -12,8 +11,8 @@ using UndefinedNetworking.Packets.Player;
 using UndefinedNetworking.Packets.UI;
 using UndefinedNetworking.Packets.World;
 using UndefinedServer.Events.PlayerEvents;
+using UndefinedServer.GameEngine.Scenes;
 using UndefinedServer.Pings;
-using UndefinedServer.UI.View;
 using Utils.Events;
 
 namespace UndefinedServer
@@ -22,13 +21,13 @@ namespace UndefinedServer
     {
         private readonly Client _client;
         private Game? _currentGame;
-        private readonly List<IUIView> _elements = new();
         private bool _isOnline;
+        public IScene ActiveScene { get; private set; }
+
+
         public Identifier Identifier => _client.Identifier;
         public string Nickname { get; }
         public string SenderName => Nickname;
-        public IEnumerable<IUIView> ViewElements => _elements;
-
         public bool IsOnline => _isOnline;
 
         public Ping NetworkPing { get; }
@@ -53,9 +52,13 @@ namespace UndefinedServer
             _client = client;
             _client.OnDisconnect += OnClientDisconnect;
             _isOnline = true;
-            foreach (var view in _elements) view.Close();
         }
-
+        public void LoadScene(SceneType type)
+        {
+            ActiveScene = type is SceneType.XY ? new Scene2D(this) : new Scene3D(this);
+            EventManager.RegisterEvent<UIOpenEvent>(ActiveScene, OnOpenView);
+            EventManager.RegisterEvent<UICloseEvent>(ActiveScene, OnUIClose);
+        }
         private void OnClientDisconnect(DisconnectCause cause, string message)
         {
             this.CallEvent(new PlayerDisconnectedEvent(this, cause, message));
@@ -73,9 +76,11 @@ namespace UndefinedServer
         {
             _client.SendPacket(new ChatPacket(_client.Identifier, message.Title, message.Text, message.Chat, message.Color));
         }
-        public IUIView Open(IUIElement element)
+        
+        
+        private void OnOpenView(UIOpenEvent e)
         {
-            var view = new UIView(element, this, null);
+            var view = e.View;
             var transform = view.Transform;
             var packet = new UIViewOpenPacket(view.Components.Where(c => c is UINetworkComponent).Cast<UINetworkComponent>().ToArray(), new ViewParameters
             {
@@ -86,16 +91,13 @@ namespace UndefinedServer
                 IsActive = transform.IsActive,
                 OriginalRect = transform.OriginalRect
             }, view.Identifier);
-            _elements.Add(view);
-            _client.SendPacket(packet);
-            return view;
+            if(_isOnline)
+                _client.SendPacket(packet);
         }
 
-        public void Close(IUIView view)
+        public void OnUIClose(UICloseEvent e)
         {
-            if (!_elements.Contains(view))
-                throw new ViewException("current view not opened on player");
-            _elements.Remove(view);
+            var view = e.View;
             if(_isOnline)
                 _client.SendPacket(new UIViewClosePacket(view.Identifier));
         }

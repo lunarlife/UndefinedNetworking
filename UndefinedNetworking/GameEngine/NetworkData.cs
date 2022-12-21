@@ -1,6 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Networking.DataConvert;
 using Networking.Packets;
 using UndefinedNetworking.Converters;

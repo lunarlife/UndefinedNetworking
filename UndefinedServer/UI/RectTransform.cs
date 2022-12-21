@@ -1,27 +1,29 @@
 using System;
 using System.Collections.Generic;
+using Networking.DataConvert;
 using UndefinedNetworking.GameEngine;
 using UndefinedNetworking.GameEngine.UI;
 using UndefinedNetworking.GameEngine.UI.Elements.Structs;
 using UndefinedServer.Exeptions;
-using UndefinedServer.UI.View;
 using Utils;
 using Utils.Dots;
 
 namespace UndefinedServer.UI;
 
-public class RectTransform : IRectTransform
+public record RectTransform : RectTransformBase
 {
-    private Rect _originalRect;
-    private Rect _anchoredRect;
-    private readonly List<RectTransform> _childs = new();
-    private Side _pivotSide;
-    private Margins _margins;
-    private Dot2Int _bindMultiplier = Dot2Int.Zero;
-    private bool _isActive;
-    private UIBind _bind;
-    private RectTransform? _parent;
-    public Rect OriginalRect
+    [ExcludeData] private Rect _originalRect;
+    [ExcludeData] private Rect _anchoredRect;
+    [ExcludeData] private readonly List<RectTransform> _childs = new();
+    [ExcludeData] private Side _pivot;
+    [ExcludeData] private Margins _margins;
+    [ExcludeData] private Dot2Int _bindMultiplier = Dot2Int.Zero;
+    [ExcludeData] private bool _isActive;
+    [ExcludeData] private UIBind _bind;
+    [ExcludeData] private RectTransform? _parent;
+    private int _layer;
+
+    public override Rect OriginalRect
     {
         get => _originalRect;
         set
@@ -31,7 +33,7 @@ public class RectTransform : IRectTransform
         }
     }
 
-    public Margins Margins
+    public override Margins Margins
     {
         get => _margins;
         set
@@ -41,15 +43,19 @@ public class RectTransform : IRectTransform
         }
     }
 
-    public Rect AnchoredRect => _anchoredRect;
+    public override Rect AnchoredRect => _anchoredRect;
 
-    public bool IsActive
+    public override bool IsActive
     {
         get => _isActive;
-        set => _isActive = value;
+        set
+        {
+            _isActive = value;
+            Update();
+        }
     }
 
-    public IRectTransform? Parent
+    public override RectTransformBase? Parent
     {
         get => _parent;
         set
@@ -63,17 +69,30 @@ public class RectTransform : IRectTransform
             UpdateRect();
         }
     }
-    public int Layer { get; set; }
 
-    public IReadOnlyList<IRectTransform> Childs => _childs;
-
-    public Side Pivot
+    public override int Layer
     {
-        get => _pivotSide;
-        set { _pivotSide = value; }
+        get => _layer;
+        set
+        {
+            _layer = value;
+            Update();
+        }
     }
 
-    public UIBind Bind
+    public override IReadOnlyList<RectTransformBase> Childs => _childs;
+
+    public override Side Pivot
+    {
+        get => _pivot;
+        set
+        {
+            _pivot = value;
+            UpdateRect();
+        }
+    }
+
+    public override UIBind Bind
     {
         get => _bind;
         set
@@ -82,8 +101,6 @@ public class RectTransform : IRectTransform
             UpdateRect();
         }
     }
-
-    public IUIView TargetView { get; }
 
     private static Dot2Int GetPositionWithBind(Rect rect, RectTransform? parent, Side bind) => parent is null
         ? rect.Position
@@ -110,19 +127,30 @@ public class RectTransform : IRectTransform
 
     private void UpdateRect()
     {
+        Update();
         _anchoredRect = CalculateAnchoredRect(_originalRect, uiBind: _bind, parent: _parent);
         for (var i = 0; i < _childs.Count; i++)
         {
             _childs[i].UpdateRect();
         }
     }
-    
+    public void ApplyParameters(ViewParameters parameters)
+    {
+        _originalRect = parameters.OriginalRect;
+        _margins = parameters.Margins;
+        _bind = parameters.Bind;
+        _parent = parameters.Parent as RectTransform;
+        _pivot = parameters.Pivot;
+        _layer = parameters.Layer;
+        _isActive = parameters.IsActive;
+        UpdateRect();
+    }
 
-    internal RectTransform(UIView current, IRectTransform? parent, bool isActive, int layer, Margins margins,
+    /*
+    internal RectTransform(RectTransformBase? parent, bool isActive, int layer, Margins margins,
         Rect originalRect, Side pivot, UIBind bind)
     {
         Parent = parent;
-        TargetView = current;
         _margins = margins;
         _originalRect = originalRect;
         _pivotSide = pivot;
@@ -130,7 +158,7 @@ public class RectTransform : IRectTransform
         Layer = layer;
         _bind = bind;
         UpdateRect();
-    }
+    }*/
 
     public static Rect CalculateAnchoredRect(Rect rect, Margins margins = new(), UIBind? uiBind = null, RectTransform? parent = null)
     {

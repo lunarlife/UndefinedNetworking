@@ -1,15 +1,12 @@
-using System.Collections.Generic;
-using UndefinedNetworking.GameEngine.Input;
 using UndefinedNetworking.GameEngine.UI;
 using UndefinedNetworking.GameEngine.UI.Components;
-using UndefinedNetworking.GameEngine.UI.Components.Mouse;
 using UndefinedNetworking.GameEngine.UI.Elements.Enums;
 using UndefinedNetworking.GameEngine.UI.Elements.Structs;
 using Utils;
 
 namespace UndefinedServer.UI.Elements;
 
-public class Text : UIElement
+public class Text
 {
     private Color _color;
     private string _text;
@@ -18,7 +15,7 @@ public class Text : UIElement
     private TextWrapping _wraping;
     private FontSize _size;
 
-    public Text(Rect rect, string text, Color? color = null, FontSize? size = null, FontStyle fontStyle = FontStyle.Normal, TextWrapping? textWrapping = null, UIElement? parent = null) : base(parent)
+    public Text(Rect rect, string text, Color? color = null, FontSize? size = null, FontStyle fontStyle = FontStyle.Normal, TextWrapping? textWrapping = null)
     {
         _color = color ?? Color.Black;
         _text = text;
@@ -33,12 +30,7 @@ public class Text : UIElement
         };
     }
 
-    public override ViewParameters CreateNewView(IUIViewer viewer) => new()
-    {
-        OriginalRect = _rect
-    };
-
-    public override void OnCreateView(IUIView view)
+    public void OnCreateView(IUIView view)
     {
         var text = view.AddComponent<TextComponent>();
         text.Color = _color;

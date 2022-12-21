@@ -1,5 +1,4 @@
 using Networking.DataConvert;
-using Networking.DataConvert.DataUse;
 using UndefinedNetworking.Events;
 using UndefinedNetworking.GameEngine.UI.Elements.Enums;
 using UndefinedNetworking.GameEngine.UI.Elements.Structs;
@@ -8,7 +7,7 @@ using Utils.Events;
 
 namespace UndefinedNetworking.GameEngine.UI.Components;
 
-public record TextComponent : UINetworkComponent, IEventCaller<TextChangeEvent>
+public record TextComponent : UINetworkComponent
 {
     [ExcludeData] private FontStyle _fontStyle;
     [ExcludeData] private FontSize _fontSize;
@@ -24,6 +23,7 @@ public record TextComponent : UINetworkComponent, IEventCaller<TextChangeEvent>
         set
         {
             _fontStyle = value;
+            Update();
         }
     }
     
@@ -34,6 +34,7 @@ public record TextComponent : UINetworkComponent, IEventCaller<TextChangeEvent>
         set
         {
             _color = value;
+            Update();
         }
     }
     
@@ -44,6 +45,7 @@ public record TextComponent : UINetworkComponent, IEventCaller<TextChangeEvent>
         set
         {
             _wrapping = value;
+            Update();
         }   
     }
     
@@ -54,6 +56,7 @@ public record TextComponent : UINetworkComponent, IEventCaller<TextChangeEvent>
         set
         {
             _text = value;
+            Update();
         }
     }
     
@@ -64,6 +67,7 @@ public record TextComponent : UINetworkComponent, IEventCaller<TextChangeEvent>
         set
         {
             _fontSize = value;
+            Update();
         }
     }
 

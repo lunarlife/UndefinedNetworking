@@ -1,9 +1,9 @@
 using UndefinedNetworking.Chats;
-using UndefinedNetworking.GameEngine.UI;
+using UndefinedNetworking.GameEngine.Scenes;
 
 namespace UndefinedNetworking.Gameplay
 {
-    public interface IPlayer : ISender, IRecipient, IUIViewer
+    public interface IPlayer : ISender, IRecipient, ISceneViewer
     {
         public string Nickname { get; }
     }

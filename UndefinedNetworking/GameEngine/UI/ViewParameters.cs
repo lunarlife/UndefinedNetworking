@@ -13,8 +13,9 @@ public struct ViewParameters
         Bind = default;
         Layer = 0;
         IsActive = true;
+        Parent = null;
     }
-
+    public RectTransformBase? Parent { get; set; }
     public Margins Margins { get; set; }
     public Rect OriginalRect { get; set; }
     public Side Pivot { get; set; }

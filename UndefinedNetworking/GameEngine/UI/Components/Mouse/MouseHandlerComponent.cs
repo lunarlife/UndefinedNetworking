@@ -1,4 +1,3 @@
-using System;
 using UndefinedNetworking.Events.Mouse;
 using Utils.Events;
 
