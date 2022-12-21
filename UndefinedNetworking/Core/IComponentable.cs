@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using UndefinedNetworking.Events.Components;
 using UndefinedNetworking.GameEngine;
+using Utils.Events;
 
 namespace UndefinedNetworking.Core;
 
-public interface IComponentable<T> where T : Component
+public interface IComponentable<T> : IEventCaller<ComponentAddEvent> where T : Component
 {
     public IEnumerable<T> Components { get; }
     public T[] AddComponents<T1, T2, T3, T4, T5>()

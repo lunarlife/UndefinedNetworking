@@ -35,9 +35,6 @@
     <ItemGroup>
       <None Remove="obj\**" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="UI\Windows" />
-    </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="xcopy /y /d  &quot;$(ProjectDir)$(OutDir)\UndefinedServer.dll&quot; &quot;C:\Code\Frameworks&quot;" />
     </Target>
