@@ -1,10 +1,13 @@
-using Networking.DataConvert;
+using Networking.DataConvert.Handlers;
 using UndefinedNetworking.Events.Mouse;
+using Utils.Events;
 
 namespace UndefinedNetworking.GameEngine.UI.Components.Mouse;
 
-public sealed record MouseEnterHandlerComponent : MouseHandlerComponent<UIMouseEnterEvent>
+public sealed record MouseEnterHandlerComponent : MouseHandlerComponent<UIMouseEnterEvent>, IDeserializeHandler
 {
-    [ExcludeData] public bool IsEntered { get; set; }
-
+    public void OnDeserialize()
+    {
+        this.CallEvent(new UIMouseEnterEvent(TargetView));
+    }
 }

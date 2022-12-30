@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using UndefinedNetworking.Events.Components;
 using UndefinedNetworking.GameEngine;
-using Utils.Events;
 
 namespace UndefinedNetworking.Core;
 
-public interface IComponentable<T> : IEventCaller<ComponentAddEvent> where T : Component
+public interface IComponentable<T> where T : Component
 {
     public IEnumerable<T> Components { get; }
     public T[] AddComponents<T1, T2, T3, T4, T5>()
@@ -30,9 +28,9 @@ public interface IComponentable<T> : IEventCaller<ComponentAddEvent> where T : C
     public T AddComponent(Type type);
     public T1 AddComponent<T1>() where T1 : T, new();
     public T[] AddComponents(params Type[] types);
-    public T1? GetComponentOfType<T1>() where T1 : T;
+    public T1 GetComponent<T1>() where T1 : T;
 
-    public T? GetComponentOfType(Type type);
+    public T GetComponent(Type type);
     public bool ContainsComponent<T1>() where T1 : T;
     public bool ContainsComponent(Type type);
 }

@@ -1,9 +1,7 @@
 using Networking.DataConvert;
-using UndefinedNetworking.Events;
 using UndefinedNetworking.GameEngine.UI.Elements.Enums;
 using UndefinedNetworking.GameEngine.UI.Elements.Structs;
 using Utils;
-using Utils.Events;
 
 namespace UndefinedNetworking.GameEngine.UI.Components;
 

@@ -1,9 +1,13 @@
-using Networking.DataConvert;
+using Networking.DataConvert.Handlers;
 using UndefinedNetworking.Events.Mouse;
+using Utils.Events;
 
 namespace UndefinedNetworking.GameEngine.UI.Components.Mouse;
 
-public sealed record MouseExitHandlerComponent : MouseHandlerComponent<UIMouseExitEvent>
+public sealed record MouseExitHandlerComponent : MouseHandlerComponent<UIMouseExitEvent>, IDeserializeHandler
 {
-    [ExcludeData] public bool IsExited { get; set; }
+    public void OnDeserialize()
+    {
+        this.CallEvent(new UIMouseExitEvent(TargetView));
+    }
 }

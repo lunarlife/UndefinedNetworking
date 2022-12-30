@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Networking;
 using UndefinedNetworking.Events.ObjectEvents;
 using UndefinedNetworking.Events.SceneEvents;
 using UndefinedNetworking.Events.UIEvents;
@@ -17,4 +18,6 @@ public interface IScene : IEventCaller<SceneUnloadEvent>, IEventCaller<SceneLoad
     public IUIView OpenView(ViewParameters parameters);
     public void CloseView(IUIView view);
     public void DestroyObject(IGameObject obj);
+    public IUIView GetView(Identifier identifier);
+    public bool TryGetView(Identifier identifier, out IUIView view);
 }

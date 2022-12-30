@@ -1,15 +1,14 @@
-using System.Linq;
 using Networking;
 using UndefinedNetworking;
 using UndefinedNetworking.Chats;
 using UndefinedNetworking.Events.UIEvents;
 using UndefinedNetworking.GameEngine.Scenes;
-using UndefinedNetworking.GameEngine.UI;
-using UndefinedNetworking.GameEngine.UI.Components;
 using UndefinedNetworking.Gameplay;
+using UndefinedNetworking.Packets.Components;
 using UndefinedNetworking.Packets.Player;
 using UndefinedNetworking.Packets.UI;
 using UndefinedNetworking.Packets.World;
+using UndefinedServer.Events;
 using UndefinedServer.Events.PlayerEvents;
 using UndefinedServer.GameEngine.Scenes;
 using UndefinedServer.Pings;
@@ -23,13 +22,10 @@ namespace UndefinedServer
         private Game? _currentGame;
         private bool _isOnline;
         public IScene ActiveScene { get; private set; }
-
-
         public Identifier Identifier => _client.Identifier;
         public string Nickname { get; }
         public string SenderName => Nickname;
         public bool IsOnline => _isOnline;
-
         public Ping NetworkPing { get; }
         public Ping TotalPing { get; }
         public Game? CurrentGame
@@ -51,13 +47,24 @@ namespace UndefinedServer
             Nickname = nickname;
             _client = client;
             _client.OnDisconnect += OnClientDisconnect;
+            EventManager.RegisterEvent(client, OnPacketReceive);
             _isOnline = true;
         }
+
+        private void OnPacketReceive(PacketReceiveEvent e)
+        {
+            switch (e.Packet)
+            {
+                case UIComponentUpdatePacket packet:
+                    break;
+            }
+        }
+
         public void LoadScene(SceneType type)
         {
             ActiveScene = type is SceneType.XY ? new Scene2D(this) : new Scene3D(this);
-            EventManager.RegisterEvent<UIOpenEvent>(ActiveScene, OnOpenView);
             EventManager.RegisterEvent<UICloseEvent>(ActiveScene, OnUIClose);
+            EventManager.RegisterEvent<UIOpenEvent>(ActiveScene, OnOpenView);
         }
         private void OnClientDisconnect(DisconnectCause cause, string message)
         {
@@ -81,16 +88,7 @@ namespace UndefinedServer
         private void OnOpenView(UIOpenEvent e)
         {
             var view = e.View;
-            var transform = view.Transform;
-            var packet = new UIViewOpenPacket(view.Components.Where(c => c is UINetworkComponent).Cast<UINetworkComponent>().ToArray(), new ViewParameters
-            {
-                Bind = transform.Bind,
-                Layer = transform.Layer,
-                Margins = transform.Margins,
-                Pivot = transform.Pivot,
-                IsActive = transform.IsActive,
-                OriginalRect = transform.OriginalRect
-            }, view.Identifier);
+            var packet = new UIViewOpenPacket(view.Identifier);
             if(_isOnline)
                 _client.SendPacket(packet);
         }

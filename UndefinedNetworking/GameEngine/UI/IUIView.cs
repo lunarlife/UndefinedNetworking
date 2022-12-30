@@ -6,7 +6,7 @@ namespace UndefinedNetworking.GameEngine.UI;
 
 public interface IUIView : IObjectBase, IComponentable<UIComponent>
 {
-    public RectTransformBase Transform { get; }
+    public RectTransform Transform { get; }
     public ISceneViewer Viewer { get; }
     public void Close();
 }

@@ -21,10 +21,6 @@ public class MouseHandlersSystem : IAsyncSystem
 
     public void Update()
     {
-        foreach (var result in _upHandlers) result.Get1().CallEvent(new UIMouseUpEvent(result.Get1().TargetView));
-        foreach (var result in _downHandlers) result.Get1().CallEvent(new UIMouseDownEvent(result.Get1().TargetView));
-        foreach (var result in _enterHandlers) result.Get1().CallEvent(new UIMouseEnterEvent(result.Get1().TargetView));
-        foreach (var result in _exitHandlers) result.Get1().CallEvent(new UIMouseExitEvent(result.Get1().TargetView));
         foreach (var result in _holdingHandlers)
         {
             var component = result.Get1();

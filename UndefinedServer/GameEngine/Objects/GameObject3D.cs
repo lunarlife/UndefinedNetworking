@@ -52,12 +52,12 @@ public class GameObject3D : IGameObject3D
         throw new NotImplementedException();
     }
 
-    public T1? GetComponentOfType<T1>() where T1 : GameObject3DComponent
+    public T1? GetComponent<T1>() where T1 : GameObject3DComponent
     {
         throw new NotImplementedException();
     }
 
-    public GameObject3DComponent? GetComponentOfType(Type type)
+    public GameObject3DComponent? GetComponent(Type type)
     {
         throw new NotImplementedException();
     }

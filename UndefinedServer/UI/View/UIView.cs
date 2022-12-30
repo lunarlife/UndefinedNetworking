@@ -15,17 +15,18 @@ namespace UndefinedServer.UI.View;
 public sealed class UIView : IUIView
 {
     private static readonly PropertyInfo TargetViewProperty = typeof(UIComponent).GetProperty("TargetView", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
+    private static readonly MethodInfo InitializeVoid = ReflectionUtils.GetMethod(typeof(Component), "Initialize")!;
     private readonly List<UIComponent> _components = new();
     public ISceneViewer Viewer { get; }
     public IEnumerable<UIComponent> Components => _components;
-    public RectTransformBase Transform { get; }
+    public RectTransform Transform { get; }
     public Identifier Identifier { get; }
 
     internal UIView(ISceneViewer viewer, ViewParameters parameters)
     {
         Identifier = new Identifier();
         Viewer = viewer;
-        var rectTransform = AddComponent<RectTransform>();
+        var rectTransform = (RectTransform)AddComponentLocal(typeof(RectTransform));
         rectTransform.ApplyParameters(parameters);
         Transform = rectTransform;
     }
@@ -34,25 +35,31 @@ public sealed class UIView : IUIView
 
     public UIComponent AddComponent(Type type)
     {
+        var component = AddComponentLocal(type);
+        return component;
+    }
+    private UIComponent AddComponentLocal(Type type)
+    {
         if (!type.IsSubclassOf(typeof(UIComponent))) throw new ComponentException($"type is not {nameof(UIComponent)}");
         var ctor = ReflectionUtils.GetConstructor(type);
         if (ctor == null) throw new ComponentException("component has no empty constructor");
-        var component = (ctor.Invoke(null) as UIComponent)!;
-        Undefined.CurrentGame.Systems.Add(component);
+        var component = (ctor.Invoke(Array.Empty<object>()) as UIComponent)!;
+        //Undefined.CurrentGame.Systems.Add(component);
         TargetViewProperty.SetValue(component, this);
-        _components.Add(component); 
+        RequireComponent.AddRequirements(component, this);
+        InitializeVoid.Invoke(component, Array.Empty<object>());
+        _components.Add(component);
         return component;
     }
-
     public UIComponent[] AddComponents(params Type[] types) => types.Select(AddComponent).ToArray();
 
-    public T? GetComponentOfType<T>() where T : UIComponent => _components.FirstOrDefault(c => c.GetType() == typeof(T)) as T;
+    public T? GetComponent<T>() where T : UIComponent => _components.FirstOrDefault(c => c.GetType() == typeof(T)) as T;
     public void Destroy()
     {
-        
+        Viewer.ActiveScene.CloseView(this);
     }
 
-    public UIComponent? GetComponentOfType(Type type) => type.IsSubclassOf(typeof(UIComponent)) ? _components.FirstOrDefault(c => c.GetType() == type) : throw new ViewException("Type is not component");
+    public UIComponent? GetComponent(Type type) => type.IsSubclassOf(typeof(UIComponent)) ? _components.FirstOrDefault(c => c.GetType() == type) : throw new ViewException("Type is not component");
     
     public void Close()
     {

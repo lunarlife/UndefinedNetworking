@@ -9,7 +9,7 @@ using Utils.Events;
 
 namespace UndefinedServer
 {
-    internal sealed class Client
+    internal sealed class Client : IEventCaller<PacketReceiveEvent>
     {
         private Server _server;
         private RuntimePacketer _packeter;
@@ -38,7 +38,6 @@ namespace UndefinedServer
 
         internal void Disconnect(DisconnectCause cause, string message)
         {
-            var s = "{\n    \"version\": {\n        \"name\": \"1.19\",\n        \"protocol\": 759\n    },\n    \"players\": {\n        \"max\": 100,\n        \"online\": 5,\n        \"sample\": [\n            {\n                \"name\": \"thinkofdeath\",\n                \"id\": \"4566e69f-c907-48ee-8d71-d7ba5aa00d20\"\n            }\n        ]\n    },\n    \"description\": {\n        \"text\": \"Hello world\"\n    },\n    \"favicon\": \"data:image/png;base64,<data>\",\n    \"previewsChat\": true,\n    \"enforcesSecureChat\": true,\n}";
             try
             {
                 _packeter.SendPacketNow(new PlayerDisconnectPacket(Identifier, cause, message));
@@ -60,7 +59,7 @@ namespace UndefinedServer
         
         private void OnReceive(Packet packet)
         {
-            EventManager.CallEvent(new PacketReceiveEvent(packet, this));
+            this.CallEvent(new PacketReceiveEvent(packet, this));
         }
     }
 }
