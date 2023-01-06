@@ -5,9 +5,10 @@ using System.Reflection;
 using Networking;
 using UndefinedNetworking.Exceptions;
 using UndefinedNetworking.GameEngine;
+using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes;
-using UndefinedNetworking.GameEngine.UI;
-using UndefinedNetworking.GameEngine.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI;
+using UndefinedNetworking.GameEngine.Scenes.UI.Components;
 using Utils;
 
 namespace UndefinedServer.UI.View;
@@ -16,15 +17,19 @@ public sealed class UIView : IUIView
 {
     private static readonly PropertyInfo TargetViewProperty = typeof(UIComponent).GetProperty("TargetView", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
     private static readonly MethodInfo InitializeVoid = ReflectionUtils.GetMethod(typeof(Component), "Initialize")!;
+    
+    private static readonly List<UIView> Views = new();
+
     private readonly List<UIComponent> _components = new();
     public ISceneViewer Viewer { get; }
-    public IEnumerable<UIComponent> Components => _components;
+    public UIComponent[] Components => _components.ToArray();
     public RectTransform Transform { get; }
-    public Identifier Identifier { get; }
+    public uint Identifier { get; }
 
     internal UIView(ISceneViewer viewer, ViewParameters parameters)
     {
-        Identifier = new Identifier();
+        Identifier = (ushort)Views.Count;
+        Views.Add(this);
         Viewer = viewer;
         var rectTransform = (RectTransform)AddComponentLocal(typeof(RectTransform));
         rectTransform.ApplyParameters(parameters);
@@ -44,7 +49,6 @@ public sealed class UIView : IUIView
         var ctor = ReflectionUtils.GetConstructor(type);
         if (ctor == null) throw new ComponentException("component has no empty constructor");
         var component = (ctor.Invoke(Array.Empty<object>()) as UIComponent)!;
-        //Undefined.CurrentGame.Systems.Add(component);
         TargetViewProperty.SetValue(component, this);
         RequireComponent.AddRequirements(component, this);
         InitializeVoid.Invoke(component, Array.Empty<object>());
@@ -69,4 +73,15 @@ public sealed class UIView : IUIView
     public bool ContainsComponent<T>() where T : UIComponent => ContainsComponent(typeof(T));
 
     public bool ContainsComponent(Type type) => _components.FirstOrDefault(c => c.GetType() == type) != null;
+
+    public static UIView GetView(uint identifier) => Views.Count > identifier
+        ? Views[(int)identifier] 
+        : throw new ViewException("view not found");  
+    public static bool TryGetView(uint identifier, out UIView view)
+    {
+        view = null;
+        return (Views.Count > identifier
+            ? view = Views[(int)identifier]
+            : null) is not null;
+    }
 }

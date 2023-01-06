@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Networking;
@@ -8,7 +9,10 @@ using Networking.Loggers;
 using Networking.Packets;
 using UECS;
 using UndefinedNetworking;
+using UndefinedNetworking.Events.GameEngine;
 using UndefinedNetworking.Packets.Player;
+using UndefinedNetworking.Packets.Server;
+using UndefinedNetworking.Packets.Server.Resources;
 using UndefinedServer.Events;
 using UndefinedServer.Events.PlayerEvents;
 using UndefinedServer.Gameplay;
@@ -17,9 +21,10 @@ using Utils.Events;
 
 namespace UndefinedServer
 {
-    public sealed class Game : IEventCaller<UpdateEvent>
+    public sealed class Game : IEventCaller<TickEvent>
     {
-        private Thread? _updateThread; 
+        private Thread? _tickThread;
+        private DateTime _lastTickTime;
         private readonly Logger _logger;
         private readonly SystemsController _systems = new();
         private readonly Dictionary<Identifier, Player> _players = new();
@@ -43,21 +48,23 @@ namespace UndefinedServer
 
         private void StartUpdateLoop()
         {
-            _updateThread = new Thread(() =>
+            _tickThread = new Thread(() =>
             {
+                _lastTickTime = DateTime.Now;
                 while (Undefined.IsEnabled)
                 {
                     Thread.Sleep(Undefined.ServerDefaultTick);
-                    Update();
+                    Tick();
                 }
             })
             {
                 Name = "Update loop"
             };
-            _updateThread.Start();
+            _tickThread.Start();
         } 
-        private void Update()
+        private void Tick()
         {
+            
             foreach (var player in from player in _players.Values
                      let time = DateTime.Now
                      where (time - player.NetworkPing.LastPingUpdate).TotalMilliseconds >=
@@ -76,7 +83,10 @@ namespace UndefinedServer
             }
             _systems.UpdateSync();
             _systems.UpdateAsync();
-            this.CallEvent(new UpdateEvent());
+            var now = DateTime.Now;
+            var delta = now - _lastTickTime;
+            _lastTickTime = now;
+            this.CallEvent(new TickEvent((float)delta.TotalMilliseconds / 1000f));
         }
         [EventHandler]
         private void OnPacketReceive(PacketReceiveEvent e)
@@ -106,16 +116,37 @@ namespace UndefinedServer
         {
             //TODO: do it
         }
-        internal void ConnectPlayer(Player player)
+        internal void ConnectPlayer(Client client, ClientInfoPacket packet)
         {
-            player.CurrentGame = this;
+            //SendFilesFromDirectory(client, Paths.ResourcesFolder);
+            var player = new Player(client, packet.Name, this);
             _players.Add(player.Identifier, player);
             _logger.Info($"Player {player.Nickname} with id {player.Identifier} joined");
             SendGamePacket(player, new PlayerConnectPacket(player.Identifier, player.Nickname));
-            EventManager.CallEvent(new PlayerConnectedEvent(player));
+            EventManager.CallEvent(new PlayerPreConnectingEvent(player));
 //            if(ChatManager.DebugChatIsEnabled) player.SendMessage(new ChatMessage(ServerSender.Instance, "sosi hui ebalai", Color.DarkRed, ChatManager.GetChat("debug")));
         }
 
+        private void SendFilesFromDirectory(Client client, string dir)
+        {
+            var packets = new List<Packet>();
+            const int packetLength = 1024;
+            foreach (var file in Directory.GetFiles(dir))
+            {
+                if(!file.EndsWith(".png")) continue;
+                var fileWithoutInResourcesFolder = file.Replace(Paths.ResourcesFolder, "");
+                using var stream = File.OpenRead(file);
+                var read = 1;
+                while (read != 0)
+                {
+                    var buffer = new byte[packetLength];
+                    read = stream.Read(buffer);
+                    packets.Add(new ResourcesPacket(read == packetLength ? buffer : buffer[..read]));
+                }
+            }
+            client.SendPacket(packets.ToArray());
+            foreach (var dir1 in Directory.GetDirectories(dir)) SendFilesFromDirectory(client, dir1);
+        }
         public void Stop()
         {
             foreach (var player in _players.Values)

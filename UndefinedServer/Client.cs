@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using Networking;
 using Networking.Packets;
@@ -31,7 +32,11 @@ namespace UndefinedServer
                 IsSending = true
             };
             _packeter.Receive += OnReceive;
-            _packeter.UnhandledException += exception => Undefined.Logger.Error(exception.Message + "\n" + exception.StackTrace);
+            _packeter.UnhandledException += exception =>
+            {
+                 Undefined.Logger.Error(exception.Message + "\n" + exception.StackTrace);
+                 Disconnect(DisconnectCause.Error, exception.StackTrace);
+            };
         }
         internal void SendPacket(params Packet[] packets) => _packeter.SendPacket(packets);
         internal void SendPacketNow(params Packet[] packets) => _packeter.SendPacketNow(packets);
@@ -56,7 +61,11 @@ namespace UndefinedServer
                 OnDisconnect?.Invoke(cause, message);
             }
         }
-        
+
+        public void Request<T>(RequestPacket<T> packet, Action<T> callback) where T : Packet
+        {
+            _packeter.Request(packet, callback);
+        }
         private void OnReceive(Packet packet)
         {
             this.CallEvent(new PacketReceiveEvent(packet, this));

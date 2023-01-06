@@ -23,7 +23,15 @@ namespace UndefinedServer
             TempData = Path.Combine(exeDir, "TempData");
             ConstantData = Path.Combine(exeDir, "ConstantData");
             ServerConfigurationFile = Path.Combine(exeDir, "server.json");
+            CheckDirs();
         }
 
+        private static void CheckDirs()
+        {
+            if (!Directory.Exists(PluginsFolder)) Directory.CreateDirectory(PluginsFolder);
+            if (!Directory.Exists(ResourcesFolder)) Directory.CreateDirectory(ResourcesFolder);
+            if (!Directory.Exists(TempData)) Directory.CreateDirectory(TempData);
+            if (!Directory.Exists(ConstantData)) Directory.CreateDirectory(ConstantData);
+        }
     }
 }

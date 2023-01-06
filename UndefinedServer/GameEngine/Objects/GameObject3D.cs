@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Networking;
-using UndefinedNetworking.GameEngine.Objects;
-using UndefinedNetworking.GameEngine.Objects.Components;
+using UndefinedNetworking.GameEngine.Scenes.Objects;
+using UndefinedNetworking.GameEngine.Scenes.Objects.Components;
 
 namespace UndefinedServer.GameEngine.Objects;
 
@@ -30,13 +30,13 @@ public class GameObject3D : IGameObject3D
         //TODO: update and send to client
     }
 
-    public Identifier Identifier { get; }
+    public uint Identifier { get; }
     public void Destroy()
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<GameObject3DComponent> Components { get; }
+    public GameObject3DComponent[] Components { get; }
     public GameObject3DComponent AddComponent(Type type)
     {
         throw new NotImplementedException();

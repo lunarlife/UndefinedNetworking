@@ -1,4 +1,4 @@
-using UndefinedNetworking.GameEngine.UI;
+using UndefinedNetworking.GameEngine.Scenes.UI;
 
 namespace UndefinedNetworking.Events.UIEvents;
 

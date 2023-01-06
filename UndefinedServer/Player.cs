@@ -1,3 +1,4 @@
+using System.IO;
 using Networking;
 using UndefinedNetworking;
 using UndefinedNetworking.Chats;
@@ -6,21 +7,26 @@ using UndefinedNetworking.GameEngine.Scenes;
 using UndefinedNetworking.Gameplay;
 using UndefinedNetworking.Packets.Components;
 using UndefinedNetworking.Packets.Player;
+using UndefinedNetworking.Packets.Server.Resources;
 using UndefinedNetworking.Packets.UI;
 using UndefinedNetworking.Packets.World;
 using UndefinedServer.Events;
 using UndefinedServer.Events.PlayerEvents;
+using UndefinedServer.GameEngine;
 using UndefinedServer.GameEngine.Scenes;
 using UndefinedServer.Pings;
 using Utils.Events;
 
 namespace UndefinedServer
 {
-    public class Player : IPlayer, IEventCaller<PlayerDisconnectedEvent>
+    public class Player : IPlayer, IEventCaller<PlayerConnectedEvent>, IEventCaller<PlayerDisconnectedEvent>
     {
         private readonly Client _client;
         private Game? _currentGame;
+        
         private bool _isOnline;
+        private PlayerConnectionState _state;
+        private int _downloadedRes = 0;
         public IScene ActiveScene { get; private set; }
         public Identifier Identifier => _client.Identifier;
         public string Nickname { get; }
@@ -28,29 +34,29 @@ namespace UndefinedServer
         public bool IsOnline => _isOnline;
         public Ping NetworkPing { get; }
         public Ping TotalPing { get; }
-        public Game? CurrentGame
-        {
-            get => _currentGame;
-            set
-            {
-                _currentGame = value;
-                if(_currentGame is not null)
-                    _client.SendPacket(new WorldPacket(_currentGame.World.Seed));
-            }
-        }
+        public Game? CurrentGame => _currentGame;
         internal Client Client => _client;
-        
-        internal Player(Client client, string nickname)
+
+        public int DownloadedResourcesCount => _downloadedRes;
+
+        public bool IsConnectedAndReady => IsOnline && _state == PlayerConnectionState.ConnectedAndReady;
+        public PlayerConnectionState State => _state;
+
+        internal Player(Client client, string nickname, Game game)
         {
+            _state = PlayerConnectionState.Connecting;
             NetworkPing = new NetworkPing(this);
             TotalPing = new TotalPing(this);
             Nickname = nickname;
             _client = client;
             _client.OnDisconnect += OnClientDisconnect;
             EventManager.RegisterEvent(client, OnPacketReceive);
+            _currentGame = game;
+            _client.SendPacket(new WorldPacket(_currentGame.World.Seed));
             _isOnline = true;
+            SendNextResource();
         }
-
+        
         private void OnPacketReceive(PacketReceiveEvent e)
         {
             switch (e.Packet)
@@ -60,6 +66,32 @@ namespace UndefinedServer
             }
         }
 
+        private void SendNextResource()
+        {
+            if (Undefined.ServerManager.ResourcesManager.ResourcesCount == _downloadedRes)
+            {
+                _state = PlayerConnectionState.ConnectedAndReady;
+                this.CallEvent(new PlayerConnectedEvent(this));
+                return;
+            }
+            var res = Undefined.ServerManager.ResourcesManager.GetResource(_downloadedRes);
+            using var stream = File.OpenRead(res.FullPath);
+            var length = stream.Length;
+            _client.Request(new ResourceDownloadStartPacket(res.Path, _downloadedRes, length), _ =>
+            {
+                _downloadedRes++;
+                SendNextResource();
+            });
+            const long packetLength = 8192;
+            while (length != 0)
+            {
+                var buffLength = length < packetLength ? length : packetLength;
+                length -= buffLength;
+                var buffer = new byte[buffLength];
+                _ = stream.Read(buffer);
+                _client.SendPacket(new ResourcesPacket(buffer));
+            }
+        }
         public void LoadScene(SceneType type)
         {
             ActiveScene = type is SceneType.XY ? new Scene2D(this) : new Scene3D(this);

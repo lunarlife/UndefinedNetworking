@@ -40,3 +40,4 @@ C:\UndefinedProject\UndefinedNetworking\UndefinedServer\obj\Debug\net6.0\Undefin
 C:\UndefinedProject\UndefinedNetworking\UndefinedServer\obj\Debug\net6.0\UndefinedServer.genruntimeconfig.cache
 C:\UndefinedProject\UndefinedNetworking\UndefinedServer\obj\Debug\net6.0\ref\UndefinedServer.dll
 D:\UndefinedProject\UndefinedNetworking\UndefinedServer\bin\Debug\net6.0\UECS.dll
+D:\UndefinedProject\UndefinedNetworking\UndefinedServer\bin\Debug\net6.0\SixLabors.ImageSharp.dll

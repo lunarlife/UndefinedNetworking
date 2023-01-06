@@ -1,4 +1,3 @@
-using Networking;
 using Networking.Packets;
 
 namespace UndefinedNetworking.Packets.UI;
@@ -6,9 +5,9 @@ namespace UndefinedNetworking.Packets.UI;
 public class UIViewClosePacket : Packet
 {
     
-    public Identifier Identifier { get; private set; }
+    public uint Identifier { get; private set; }
 
-    public UIViewClosePacket(Identifier identifier)
+    public UIViewClosePacket(uint identifier)
     {
         Identifier = identifier;
     }

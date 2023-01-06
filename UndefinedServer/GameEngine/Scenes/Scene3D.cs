@@ -1,5 +1,5 @@
-using UndefinedNetworking.GameEngine.Objects;
 using UndefinedNetworking.GameEngine.Scenes;
+using UndefinedNetworking.GameEngine.Scenes.Objects;
 
 namespace UndefinedServer.GameEngine.Scenes;
 

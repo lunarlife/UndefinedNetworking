@@ -4,7 +4,7 @@ using Networking;
 using Networking.DataConvert;
 using UECS;
 using UndefinedNetworking.GameEngine;
-using UndefinedNetworking.GameEngine.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI.Components;
 using UndefinedNetworking.Packets.Components;
 using UndefinedServer.UI.View;
 
@@ -38,17 +38,17 @@ public class NetComponentSystem : IAsyncSystem, IDynamicDataConverter
             DataConverter.Serialize(o, switcher: ClientDataAttribute.DataId, converterUsing: ConvertType.ExcludeCurrent);
         var componentId = Component.GetComponentId(o.GetType());
         var view = (o as UIComponent)?.TargetView;
-        return DataConverter.Combine(DataConverter.Serialize(componentId), DataConverter.Serialize(view?.Identifier), serialize);
+        return DataConverter.Combine(DataConverter.Serialize(view?.Identifier), DataConverter.Serialize(componentId), serialize);
     }
 
     public object? Deserialize(byte[] data, Type type)
     {
         ushort index = 0;
-        var identifier = DataConverter.Deserialize<Identifier>(data, ref index)!;
-        var result = _uis.FirstOrDefault(nc => nc.Get1().Identifier == identifier).Get1();
-        if (result is null)
-            return null;
-        DataConverter.DeserializeInject(data, result, ref index, switcher: ServerDataAttribute.DataId, converterUsing: ConvertType.ExcludeCurrent);
-        return result;
+        var identifier = DataConverter.Deserialize<uint>(data, ref index)!;
+        var componentId = Component.GetComponentType(DataConverter.Deserialize<ushort>(data, ref index)!);
+        var view = UIView.GetView(identifier);
+        var component = view.GetComponent(componentId);
+        DataConverter.DeserializeInject(data, component, ref index, switcher: ServerDataAttribute.DataId);
+        return component;
     }
 }

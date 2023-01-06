@@ -1,6 +1,6 @@
 using UECS;
 using UndefinedNetworking.Events.Mouse;
-using UndefinedNetworking.GameEngine.UI.Components.Mouse;
+using UndefinedNetworking.GameEngine.Scenes.UI.Components.Mouse;
 using Utils.Events;
 
 namespace UndefinedServer.UI;

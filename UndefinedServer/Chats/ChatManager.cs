@@ -5,7 +5,7 @@ using UndefinedNetworking.Gameplay.Chat;
 using UndefinedNetworking.Packets.Player;
 using UndefinedServer.Events;
 using UndefinedServer.Events.Chats;
-using UndefinedServer.Exeptions;
+using UndefinedServer.Exceptions;
 using Utils.Enums;
 using Utils.Events;
 

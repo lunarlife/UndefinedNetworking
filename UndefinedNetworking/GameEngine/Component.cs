@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using UECS;
-using UndefinedNetworking.GameEngine.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI.Components;
 using Utils.Enums;
 
 namespace UndefinedNetworking.GameEngine;

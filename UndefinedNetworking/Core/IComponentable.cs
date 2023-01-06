@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using UndefinedNetworking.GameEngine;
 
 namespace UndefinedNetworking.Core;
 
 public interface IComponentable<T> where T : Component
 {
-    public IEnumerable<T> Components { get; }
+    public T[] Components { get; }
     public T[] AddComponents<T1, T2, T3, T4, T5>()
         where T1 : T, new()
         where T2 : T, new()

@@ -6,10 +6,10 @@ using UndefinedNetworking.Events.SceneEvents;
 using UndefinedNetworking.Events.UIEvents;
 using UndefinedNetworking.Exceptions;
 using UndefinedNetworking.GameEngine;
-using UndefinedNetworking.GameEngine.Objects;
 using UndefinedNetworking.GameEngine.Scenes;
-using UndefinedNetworking.GameEngine.UI;
-using UndefinedServer.Exeptions;
+using UndefinedNetworking.GameEngine.Scenes.Objects;
+using UndefinedNetworking.GameEngine.Scenes.UI;
+using UndefinedServer.Exceptions;
 using UndefinedServer.UI.View;
 using Utils.Events;
 
@@ -17,10 +17,10 @@ namespace UndefinedServer.GameEngine.Scenes;
 
 public abstract class Scene<T> : IScene where T : IGameObject
 {
-    private readonly Dictionary<Identifier, IObjectBase> _objects = new();
+    private readonly List<IObjectBase> _objects = new();
     public ISceneViewer Viewer { get; }
 
-    public IEnumerable<IObjectBase> Objects => _objects.Values;
+    public IObjectBase[] Objects => _objects.ToArray();
 
     public abstract SceneType Type { get; }
     
@@ -33,14 +33,14 @@ public abstract class Scene<T> : IScene where T : IGameObject
     public void CloseView(IUIView view)
     {
         if (!Objects.Contains(view)) throw new ObjectException("unknown object");
-        _objects.Remove(view.Identifier);
+        _objects.Remove(view);
         this.CallEvent(new UICloseEvent(view));
     }
 
     public IUIView OpenView(ViewParameters parameters)
     {
         var view = new UIView(Viewer, parameters);
-        _objects.Add(view.Identifier, view);
+        _objects.Add(view);
         this.CallEvent(new UIOpenEvent(view));
         return view;
     }
@@ -58,18 +58,18 @@ public abstract class Scene<T> : IScene where T : IGameObject
     public void DestroyObject(IGameObject obj)
     {
         if (!Objects.Contains(obj)) throw new ObjectException("unknown object");
-        _objects.Remove(obj.Identifier);
+        _objects.Remove(obj);
         this.CallEvent(new ObjectDestroyEvent(obj));
     }
 
-    public IUIView GetView(Identifier identifier) =>
-        !_objects.ContainsKey(identifier) || _objects[identifier] is not IUIView view
+    public IUIView GetView(uint identifier) =>
+        _objects.Count > identifier || _objects[(int)identifier] is not IUIView view
             ? throw new ViewException("view not found")
             : view;
 
-    public bool TryGetView(Identifier identifier, out IUIView? view)
+    public bool TryGetView(uint identifier, out IUIView view)
     {
-        if (!_objects.ContainsKey(identifier) || _objects[identifier] is not IUIView v)
+        if (_objects.Count > identifier || _objects[(int)identifier] is not IUIView v)
         {
             view = null;
             return false;

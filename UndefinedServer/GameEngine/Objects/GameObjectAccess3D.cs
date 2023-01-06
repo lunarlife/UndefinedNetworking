@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UndefinedNetworking.Core;
 using UndefinedNetworking.Exceptions;
-using UndefinedNetworking.GameEngine.Objects.Components;
+using UndefinedNetworking.GameEngine.Scenes.Objects.Components;
 using Utils;
 
 namespace UndefinedServer.GameEngine.Objects;

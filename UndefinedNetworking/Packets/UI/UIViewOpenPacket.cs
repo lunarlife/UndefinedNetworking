@@ -1,13 +1,12 @@
-using Networking;
 using Networking.Packets;
 
 namespace UndefinedNetworking.Packets.UI;
 
 public class UIViewOpenPacket : Packet
 {
-    public Identifier Identifier { get; private set; }
+    public uint Identifier { get; private set; }
 
-    public UIViewOpenPacket(Identifier identifier)
+    public UIViewOpenPacket(uint identifier)
     {
         Identifier = identifier;
     }

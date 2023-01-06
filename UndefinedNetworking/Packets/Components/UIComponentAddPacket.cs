@@ -1,6 +1,6 @@
 using Networking;
 using Networking.Packets;
-using UndefinedNetworking.GameEngine.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI.Components;
 
 namespace UndefinedNetworking.Packets.Components;
 

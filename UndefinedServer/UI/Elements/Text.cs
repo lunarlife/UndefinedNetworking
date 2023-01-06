@@ -1,7 +1,7 @@
-using UndefinedNetworking.GameEngine.UI;
-using UndefinedNetworking.GameEngine.UI.Components;
-using UndefinedNetworking.GameEngine.UI.Elements.Enums;
-using UndefinedNetworking.GameEngine.UI.Elements.Structs;
+using UndefinedNetworking.GameEngine.Scenes.UI;
+using UndefinedNetworking.GameEngine.Scenes.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI.Enums;
+using UndefinedNetworking.GameEngine.Scenes.UI.Structs;
 using Utils;
 
 namespace UndefinedServer.UI.Elements;

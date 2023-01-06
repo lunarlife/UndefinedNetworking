@@ -3,14 +3,16 @@
     <PropertyGroup>
         <ImplicitUsings>disable</ImplicitUsings>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>11</LangVersion>
         <Nullable>enable</Nullable>
         <RootNamespace>UndefinedServer</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="Networking">
@@ -34,6 +36,9 @@
     </ItemGroup>
     <ItemGroup>
       <None Remove="obj\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="GameEngine\Converters" />
     </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="xcopy /y /d  &quot;$(ProjectDir)$(OutDir)\UndefinedServer.dll&quot; &quot;C:\Code\Frameworks&quot;" />

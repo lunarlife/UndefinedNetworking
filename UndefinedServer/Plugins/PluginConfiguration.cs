@@ -4,6 +4,6 @@ namespace UndefinedServer.Plugins
 {
     public struct PluginConfiguration
     {
-        public Version PluginVersion { get; set; }
+        public Version PluginVersion { get; init; }
     }
 }

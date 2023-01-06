@@ -12,7 +12,8 @@ using UndefinedNetworking.Packets.Server;
 using UndefinedServer.Chats;
 using UndefinedServer.Commands;
 using UndefinedServer.Events;
-using UndefinedServer.Exeptions;
+using UndefinedServer.Exceptions;
+using UndefinedServer.GameEngine;
 using UndefinedServer.Gameplay;
 using UndefinedServer.Loggers;
 using UndefinedServer.Plugins;
@@ -28,8 +29,6 @@ namespace UndefinedServer
         private static Undefined? _instance;
         private static ServerConfiguration _serverConfiguration;
         private static readonly int _clientInfoWaitTime = 4000;
-        private static readonly Version _version = new("0.1alpha");
-        
         private static Server _server;
         private static Server _authServer;
         private static Game _currentGame;
@@ -43,8 +42,9 @@ namespace UndefinedServer
         public static int ServerDefaultTick => _serverConfiguration.Tick;
 
         public static ServerConfiguration ServerConfiguration => _serverConfiguration;
+        public static ServerManager ServerManager { get; private set; }
 
-        public Undefined()
+        private Undefined()
         {
             if (_instance is not null)
                 throw new ServerException("UndefinedServer is already instanced");
@@ -52,33 +52,7 @@ namespace UndefinedServer
             EventManager.RegisterEvents(this);
         }
         
-        private static void LoadAll()
-        {
-            Logger.Info("Loading assemblies...");
-            AppDomain.CurrentDomain.Load("Utils");
-            AppDomain.CurrentDomain.Load("UECS");
-            AppDomain.CurrentDomain.Load("Networking");
-            AppDomain.CurrentDomain.Load("UndefinedNetworking");
-            //ShowTypeCountInfo();
-            NetworkData.LoadNetworkData();
-            Logger.Info("Loading configurations...");
-            if (Configuration.LoadConfiguration<ServerConfiguration>() is not { } configuration)
-            {
-                configuration = new ServerConfiguration
-                {
-                    Tick = 10,
-                    Port = 2402,
-                    IP = "127.0.0.1",
-                    IsDebugEnabled = false,
-                    MaxPlayerPing = 500,
-                    PingCheckDelay = 1000,
-                    MaxPingInvalidRequests = 3
-                    
-                };
-                configuration.Save();
-            }
-            _serverConfiguration = configuration;
-        }
+        
 
         private static void ShowTypeCountInfo()
         {
@@ -135,15 +109,16 @@ namespace UndefinedServer
             AppDomain.CurrentDomain.ProcessExit -= OnExit;
             EventManager.CallEvent(new ServerClosedEvent());
         }
+        
         public static void StartupServer(Logger logger)
         {
             if (IsEnabled) throw new ServerException("server is already started");
             AppDomain.CurrentDomain.ProcessExit += OnExit;
             _ = new Undefined();
+            ServerManager = new ServerManager();
             _ = new ChatManager();
             _ = new CommandManager();
             _logger = logger;
-            if(!ServerData.IsLoaded) ServerData.LoadData();
             LoadAll();
             _server = new Server();
             IPAddress address;
@@ -165,7 +140,33 @@ namespace UndefinedServer
             Plugin.LoadAllPlugins(operation);
             operation.Wait(s => Logger.Info(s));
         }
-
+        private static void LoadAll()
+        {
+            Logger.Info("Loading assemblies...");
+            AppDomain.CurrentDomain.Load("Utils");
+            AppDomain.CurrentDomain.Load("UECS");
+            AppDomain.CurrentDomain.Load("Networking");
+            AppDomain.CurrentDomain.Load("UndefinedNetworking");
+            if(!ServerData.IsLoaded) ServerManager.ResourcesManager.LoadAll();
+            //ShowTypeCountInfo();
+            NetworkData.LoadNetworkData();
+            Logger.Info("Loading configurations...");
+            if (Configuration.LoadConfiguration<ServerConfiguration>() is not { } configuration)
+            {
+                configuration = new ServerConfiguration
+                {
+                    Tick = 10,
+                    Port = 2402,
+                    IP = "127.0.0.1",
+                    IsDebugEnabled = false,
+                    MaxPlayerPing = 500,
+                    PingCheckDelay = 1000,
+                    MaxPingInvalidRequests = 3
+                };
+                configuration.Save();
+            }
+            _serverConfiguration = configuration;
+        }
         [EventHandler]
         private void OnPacketReceive(PacketReceiveEvent e)
         {
@@ -173,13 +174,13 @@ namespace UndefinedServer
             if (_waitedClients.Contains(e.Client))
             {
                 _waitedClients.Remove(e.Client);
-                if (packet.Version != _version)
+                if (packet.Version != ServerManager.ServerVersion)
                 {
                     e.Client.Disconnect(DisconnectCause.InvalidVersion, "invalid version");
                     return;
                 }
                 e.Client.SendPacket(new ServerInfoPacket(_serverConfiguration.Tick, e.Client.Identifier, ChatManager.Chats, CommandManager.Commands));
-                _currentGame.ConnectPlayer(new Player(e.Client, packet.Name));
+                _currentGame.ConnectPlayer(e.Client, packet);
             }
             else e.Client.Disconnect(DisconnectCause.InvalidPacket, "You already connected");
         }

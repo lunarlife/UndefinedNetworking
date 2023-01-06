@@ -14,6 +14,7 @@ public static class NetworkData
         if (_isLoaded) throw new NetworkDataException("data is already loaded");
         DataConverter.AddStaticConverter(new ColorConverter());
         DataConverter.AddStaticConverter(new RectConverter());
+        DataConverter.AddDynamicConverter(new ResourceConverter());
         Packet.LoadPackets();
         Component.LoadComponents();
         _isLoaded = true;
