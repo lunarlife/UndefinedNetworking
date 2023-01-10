@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Networking;
-using Networking.DataConvert;
 using Networking.Loggers;
 using Networking.Packets;
 using UECS;
@@ -13,7 +12,6 @@ using UndefinedNetworking.Events.GameEngine;
 using UndefinedNetworking.Packets.Player;
 using UndefinedNetworking.Packets.Server;
 using UndefinedNetworking.Packets.Server.Resources;
-using UndefinedServer.Events;
 using UndefinedServer.Events.PlayerEvents;
 using UndefinedServer.Gameplay;
 using UndefinedServer.UI;
@@ -90,14 +88,14 @@ namespace UndefinedServer
             _lastTickTime = now;
             Tick.Invoke(new TickEventData((float)delta.TotalMilliseconds / 1000f));
         }
-        
-        
-        
+
+
+
         [EventHandler]
         private void OnPlayerDisconnect(PlayerDisconnectedEventData e)
         {
-                    var player = e.Player;
-                    SendGamePacket(player, new PlayerDisconnectPacket(e.Player.Identifier, e.Cause, e.Message));
+            var player = e.Player;
+            //SendGamePacket(player, new PlayerDisconnectPacket(e.Player.Identifier, e.Cause, e.Message));
         }
 
         [EventHandler]
@@ -119,7 +117,6 @@ namespace UndefinedServer
             player.UpdatePlayerResources();
             _players.Add(player.Identifier, player);
             _logger.Info($"Player {player.Nickname} with id {player.Identifier} joined");
-            SendGamePacket(player, new PlayerConnectPacket(player.Identifier, player.Nickname));
             PlayerPreConnecting.Invoke(new PlayerPreConnectingEventDataData(player));
 //            if(ChatManager.DebugChatIsEnabled) player.SendMessage(new ChatMessage(ServerSender.Instance, "sosi hui ebalai", Color.DarkRed, ChatManager.GetChat("debug")));
         }

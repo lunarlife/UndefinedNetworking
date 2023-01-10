@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Networking;
 using Networking.Events;
 using Networking.Loggers;
-using Networking.Packets;
 using UndefinedNetworking;
 using UndefinedNetworking.Packets.Server;
 using UndefinedServer.Chats;
@@ -18,7 +17,6 @@ using UndefinedServer.Gameplay;
 using UndefinedServer.Loggers;
 using UndefinedServer.Plugins;
 using Utils;
-using Utils.AsyncOperations;
 using Utils.Events;
 
 namespace UndefinedServer
@@ -53,7 +51,7 @@ namespace UndefinedServer
             Initialize();
         }
 
-        private void Initialize()
+        private async void Initialize()
         {
             _ = new ChatManager();
             _ = new CommandManager();
@@ -74,9 +72,7 @@ namespace UndefinedServer
             RuntimePacketer.IsThreadPoolWorking = true;
             IsEnabled = true;
             _currentGame = new Game(new GameWorld("world", 1), _logger);
-            var operation = new AsyncOperationInfo<string>(10);
-            Plugin.LoadAllPlugins(operation);
-            operation.Wait(s => Logger.Info(s));
+            await Plugin.LoadAllPlugins(); 
             EventManager.RegisterEvents(this);
         } 
         

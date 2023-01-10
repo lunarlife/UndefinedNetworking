@@ -1,14 +1,15 @@
 using UECS;
 using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components;
-using UndefinedNetworking.Packets.Components;
+using UndefinedServer.Events;
+using Utils.Events;
 
 namespace UndefinedServer.UI;
 
 public class NetComponentSystem : IAsyncSystem
 {
     [ChangeHandler] private Filter<IComponent<UINetworkComponentData>> _changedUIs;
-
+    public Event<ComponentRemoteUpdateEventData> OnRemoteUpdate { get; } = new();
     public void Init()
     {
         
@@ -19,11 +20,9 @@ public class NetComponentSystem : IAsyncSystem
         foreach (var result in _changedUIs)
         {
             var res = result.Get1();
-            res.Read(component =>
-            {
-                if(component.TargetView.Viewer is not Player player) return;
-                player.Client.SendPacket(new UIComponentUpdatePacket(res));
-            });
+            if (!res.ShouldBeUpdatedRemote) return;
+            res.ShouldBeUpdatedRemote = false;
+            OnRemoteUpdate.Invoke(new ComponentRemoteUpdateEventData(res));
         }
     }
 }

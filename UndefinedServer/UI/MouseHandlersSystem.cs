@@ -2,7 +2,6 @@ using UECS;
 using UndefinedNetworking.Events.Mouse;
 using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components.Mouse;
-using Utils.Events;
 
 namespace UndefinedServer.UI;
 
@@ -27,7 +26,7 @@ public class MouseHandlersSystem : IAsyncSystem
             result.Get1().Read(component =>
             {
                 if(!component.IsHolding) return;
-                component.Event.Invoke(new MouseHoldingEventData(component.TargetView));
+                component.Event.Invoke(new MouseHoldingEventData(component.TargetObject));
             });
         }
     }

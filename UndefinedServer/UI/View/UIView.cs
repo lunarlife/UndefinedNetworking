@@ -8,28 +8,27 @@ using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes;
 using UndefinedNetworking.GameEngine.Scenes.UI;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI.Views;
 using Utils.Events;
 
 namespace UndefinedServer.UI.View;
 
-public sealed class UIView : IUIView
+public abstract class UIView : IUIViewBase
 {
-    private static readonly PropertyInfo TargetViewProperty = typeof(UIComponentData).GetProperty("TargetView", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
+    private static readonly PropertyInfo TargetViewProperty = typeof(ComponentData).GetProperty("TargetObject", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
     
     private static readonly List<UIView> Views = new();
 
     private readonly List<IComponent<UIComponentData>> _components = new();
-    public ISceneViewer Viewer { get; }
     public IComponent<UIComponentData>[] Components => _components.ToArray();
     public Event<UICloseEventData> OnClose { get; } = new();
     public IComponent<RectTransform> Transform { get; }
     public uint Identifier { get; }
 
-    internal UIView(ISceneViewer viewer, ViewParameters parameters)
+    internal UIView(ViewParameters parameters)
     {
         Identifier = (ushort)Views.Count;
         Views.Add(this);
-        Viewer = viewer;
         var rectTransform = (IComponent<RectTransform>)AddComponentLocal(typeof(RectTransform));
         rectTransform.Modify(data =>
         {
@@ -67,10 +66,7 @@ public sealed class UIView : IUIView
         return component is not null;
     }
 
-    public void Destroy()
-    {
-        OnClose.Invoke(new UICloseEventData(this));
-    }
+    public abstract void Destroy();
 
     public IComponent<UIComponentData> GetComponent(Type type) => type.IsSubclassOf(typeof(UIComponentData)) ? _components.FirstOrDefault(c => c.ComponentType == type) : throw new ViewException("Type is not component");
     
@@ -78,6 +74,8 @@ public sealed class UIView : IUIView
     {
         Destroy();
     }
+
+    public abstract bool ContainsViewer(ISceneViewer viewer);
 
     public bool ContainsComponent<T>() where T : UIComponentData => ContainsComponent(typeof(T));
 

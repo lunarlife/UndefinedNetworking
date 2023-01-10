@@ -1,7 +1,6 @@
 using Networking.DataConvert.Handlers;
 using UndefinedNetworking.Events.Mouse;
 using UndefinedNetworking.GameEngine.Input;
-using Utils.Events;
 
 namespace UndefinedNetworking.GameEngine.Scenes.UI.Components.Mouse;
 
@@ -12,7 +11,7 @@ public sealed record MouseDownHandler : MouseHandler<MouseDownEventData>, IDeser
     
     public void OnDeserialize()
     {
-        Event.Invoke(new MouseDownEventData(TargetView));
+        Event.Invoke(new MouseDownEventData(TargetObject));
     }
 }
 

@@ -1,10 +1,11 @@
 using UndefinedNetworking.GameEngine.Scenes.UI;
+using UndefinedNetworking.GameEngine.Scenes.UI.Views;
 using Utils.Events;
 
 namespace UndefinedNetworking.Events
 {
     public abstract class UIEventData : EventData
     {
-        public abstract IUIView View { get; }
+        public abstract IUIViewBase View { get; }
     }
 }

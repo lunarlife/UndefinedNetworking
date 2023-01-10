@@ -80,7 +80,7 @@ public sealed record RectTransform : UINetworkComponentData, IDeserializeHandler
             _parent?.Modify(c =>
             {
                 c._childs.Add(this);
-                _parentViewIdentifier = c.TargetView.Identifier;
+                _parentViewIdentifier = c.TargetObject.Identifier;
             });
             UpdateRect();
         }
@@ -129,16 +129,16 @@ public sealed record RectTransform : UINetworkComponentData, IDeserializeHandler
         {
             if (Parent is null)
             {
-                _parent = TargetView.Viewer.ActiveScene.GetView(id).GetComponent<RectTransform>();
+                _parent = ServerManagerBase.ServerManager.GetView(id).GetComponent<RectTransform>();
                 _parent.Modify(transform => transform._childs.Add(this));
             }
             else
             {
                 _parent?.Modify(current =>
                 {
-                    if (current.TargetView.Identifier == _parentViewIdentifier) return;
+                    if (current.TargetObject.Identifier == _parentViewIdentifier) return;
                     current._childs.Remove(this);
-                    _parent = TargetView.Viewer.ActiveScene.GetView(id).GetComponent<RectTransform>();
+                    _parent = ServerManagerBase.ServerManager.GetView(id).GetComponent<RectTransform>();
                     _parent.Modify(transform => transform._childs.Add(this));
                 });
             }
@@ -261,7 +261,7 @@ public sealed record RectTransform : UINetworkComponentData, IDeserializeHandler
         _parent = parameters.Parent;
         _parent?.Modify(transform =>
         {
-            _parentViewIdentifier = transform.TargetView.Identifier;
+            _parentViewIdentifier = transform.TargetObject.Identifier;
             transform._childs.Add(this);
         });
         _pivot = parameters.Pivot;

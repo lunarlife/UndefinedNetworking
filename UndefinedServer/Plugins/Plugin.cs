@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Utils.AsyncOperations;
 
 namespace UndefinedServer.Plugins
 {
@@ -62,9 +61,9 @@ namespace UndefinedServer.Plugins
                 throw new PluginLoadException(filePath, $"Unknown error, message: {e.Message}");
             }
         }
-        internal static async void LoadAllPlugins(AsyncOperationInfo<string> operation)
+        internal static async Task LoadAllPlugins()
         {
-            operation.Start("Loading plugins...");
+            Undefined.Logger.Info("Loading plugins...");
             await Task.Run(() =>
             {
                 if (!Directory.Exists(Paths.PluginsFolder)) Directory.CreateDirectory(Paths.PluginsFolder);
@@ -73,12 +72,11 @@ namespace UndefinedServer.Plugins
                     if(!file.EndsWith(".dll")) continue;
                     if(LoadFile(file) is not { } plugin) return;
                     LoadedPlugins.Add(plugin.Name, plugin);
-                    operation.CurrentState = $"Enabling plugin {plugin.Name}...";
+                    Undefined.Logger.Info($"Enabling plugin {plugin.Name}...");
                     plugin.IsEnabled = true;
-                    operation.CurrentState = $"Plugin {plugin.Name} enabled";
+                    Undefined.Logger.Info($"Plugin {plugin.Name} enabled");
                 }
-                operation.CurrentState = $"{LoadedPlugins.Count} plugins loaded";
-                operation.Finish();
+                Undefined.Logger.Info($"{LoadedPlugins.Count} plugins loaded");
             });
         }
 

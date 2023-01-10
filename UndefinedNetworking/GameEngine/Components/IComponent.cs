@@ -1,11 +1,13 @@
 using System;
-using Networking;
 using UECS;
+using UndefinedNetworking.GameEngine.Scenes.UI.Views;
 
 namespace UndefinedNetworking.GameEngine.Components;
 
 public interface IComponent : IComponentBase
 {
+    public IObjectBase TargetObject { get; }
+    public bool ShouldBeUpdatedRemote { get; set; }
     public Type ComponentType { get; }
     public IComponent CastModify<T>(Action<T> action) where T : ComponentData;
     public IComponent CastRead<T>(Action<T> action) where T : ComponentData;

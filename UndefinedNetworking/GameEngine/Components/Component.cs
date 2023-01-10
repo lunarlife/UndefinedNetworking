@@ -3,6 +3,7 @@ using System.Linq;
 using UECS;
 using UndefinedNetworking.Exceptions;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI.Views;
 using Utils;
 using Utils.Enums;
 
@@ -14,8 +15,24 @@ public abstract class Component : IComponent
     private static Enum<ComponentId> _componentsIds = new();
     private ComponentData _data;
     private object _dataLock = new();
-    public Type ComponentType { get; }
 
+    public IObjectBase TargetObject
+    {
+        get
+        {
+            lock (_dataLock)
+                return _data.TargetObject;
+        }
+    }
+
+    public bool ShouldBeUpdatedRemote
+    {
+        get;
+        set;
+    }
+
+    public Type ComponentType { get; }
+    
     internal Component(ComponentData data)
     {
         _data = data;
@@ -49,6 +66,7 @@ public abstract class Component : IComponent
             using var data = _data;
             action.Invoke(_data);
             _data = _data with { };
+            ((IComponentBase)this).Update();
         }
     }
 
@@ -64,6 +82,7 @@ public abstract class Component : IComponent
             d.DynamicInvoke(_data);
             _data = _data with { };
             ((IComponentBase)this).Update();
+            ShouldBeUpdatedRemote = true;
         }
     }
     protected void InitializeRead(Delegate d)

@@ -1,7 +1,6 @@
 using System;
 using Networking.Packets;
 using UndefinedNetworking.Packets.Server;
-using UndefinedServer.Events;
 using UndefinedServer.Events.PlayerEvents.PingEvents;
 using Utils.Events;
 
@@ -24,6 +23,7 @@ public class TotalPing : Ping
 
     public override void Update()
     {
+        if(!_player.IsOnline) Dispose();
         _lastPingUpdate = DateTime.Now;
         _player.Client.SendPacket(new ClientPingPacket());
         _invalidRequestsCount++;

@@ -1,6 +1,5 @@
 using Networking.DataConvert.Handlers;
 using UndefinedNetworking.Events.Mouse;
-using Utils.Events;
 
 namespace UndefinedNetworking.GameEngine.Scenes.UI.Components.Mouse;
 
@@ -8,6 +7,6 @@ public sealed record MouseExitHandler : MouseHandler<MouseExitEventData>, IDeser
 {
     public void OnDeserialize()
     {
-        Event.Invoke(new MouseExitEventData(TargetView));
+        Event.Invoke(new MouseExitEventData(TargetObject));
     }
 }

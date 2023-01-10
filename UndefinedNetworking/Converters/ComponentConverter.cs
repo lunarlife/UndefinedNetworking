@@ -1,6 +1,5 @@
 using System;
 using Networking.DataConvert;
-using Networking.Packets;
 using UndefinedNetworking.GameEngine;
 using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components;
@@ -17,7 +16,7 @@ public class ComponentConverter : IDynamicDataConverter
         var serialize =
             DataConverter.Serialize(data, switcher: (ushort)(int)ServerManagerBase.Type.GetRemoteType());
         var componentId = Component.GetComponentId(data.GetType());
-        var view = (data as UIComponentData)?.TargetView;
+        var view = (data as UIComponentData)?.TargetObject;
         return DataConverter.Combine(DataConverter.Serialize(view?.Identifier), DataConverter.Serialize(componentId), serialize);
     }
 

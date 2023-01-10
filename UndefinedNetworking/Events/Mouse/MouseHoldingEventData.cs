@@ -1,11 +1,12 @@
 using UndefinedNetworking.GameEngine.Scenes.UI;
+using UndefinedNetworking.GameEngine.Scenes.UI.Views;
 
 namespace UndefinedNetworking.Events.Mouse;
 
 public class MouseHoldingEventData : MouseEventData
 {
-    public override IUIView View { get; }
-    public MouseHoldingEventData(IUIView view)
+    public override IUIViewBase View { get; }
+    public MouseHoldingEventData(IUIViewBase view)
     {
         View = view;
     }

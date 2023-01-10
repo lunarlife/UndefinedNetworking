@@ -1,12 +1,13 @@
-using System;
 using System.IO;
-using System.Reflection;
 using Networking;
 using Networking.Packets;
 using UndefinedNetworking;
 using UndefinedNetworking.Chats;
 using UndefinedNetworking.Events.UIEvents;
+using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes;
+using UndefinedNetworking.GameEngine.Scenes.UI.Components;
+using UndefinedNetworking.GameEngine.Scenes.UI.Views;
 using UndefinedNetworking.Gameplay;
 using UndefinedNetworking.Packets.Components;
 using UndefinedNetworking.Packets.Player;
@@ -22,7 +23,7 @@ using Utils.Events;
 
 namespace UndefinedServer
 {
-    public class Player : IPlayer
+    public class Player : IPlayer, IEventListener
     {
         private readonly Client _client;
         private Game? _currentGame;
@@ -59,6 +60,7 @@ namespace UndefinedServer
             client.OnPacketReceive.AddListener(OnPacketReceive);
             _currentGame = game;
             _client.SendPacket(new WorldPacket(_currentGame.World.Seed));
+            EventManager.RegisterEvents(this);
             _isOnline = true;
         }
         
@@ -69,11 +71,30 @@ namespace UndefinedServer
                 case UIComponentUpdatePacket packet:
                     break;
                 case PlayerDisconnectPacket pdp:
-                    if (pdp.Identifier == Identifier)
-                        OnDisconnect.Invoke(new PlayerDisconnectedEventData(this, pdp.Cause, pdp.Message));
-                    Client.Disconnect(pdp.Cause, pdp.Message);
+                    Disconnect(pdp.Cause, pdp.Message);
                     break;
             }
+        }
+
+
+        private void Disconnect(DisconnectCause cause, string message)
+        {
+            DisconnectLocal();
+            Client.Disconnect(cause, message);
+            OnDisconnect.Invoke(new PlayerDisconnectedEventData(this, cause, message));
+        }
+        private void DisconnectLocal()
+        {
+            _isOnline = false;
+            NetworkPing.Dispose();
+            TotalPing.Dispose();
+            ActiveScene.Unload();
+        }
+        [EventHandler]
+        private void OnComponentUpdate(ComponentRemoteUpdateEventData e)
+        {
+            if(((IUIViewBase)e.Component.TargetObject).ContainsViewer(this))
+                Client.SendPacket(new UIComponentUpdatePacket((IComponent<UINetworkComponentData>)e.Component));
         }
 
         public void UpdatePlayerResources()
@@ -118,15 +139,12 @@ namespace UndefinedServer
         }
         private void OnClientDisconnect(DisconnectCause cause, string message)
         {
-            OnDisconnect.Invoke(new PlayerDisconnectedEventData(this, cause, message));
-            _isOnline = false;
-            NetworkPing.Dispose();
-            TotalPing.Dispose();
+            DisconnectLocal();
         }
 
         public void Kick(string message)
         {
-            _client.Disconnect(DisconnectCause.Kicked, message);
+            Disconnect(DisconnectCause.Kicked, message);
         }
         
         public void SendMessage(ChatMessage message)

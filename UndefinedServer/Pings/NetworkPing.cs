@@ -22,6 +22,7 @@ public class NetworkPing : Ping
 
     public override void Update()
     {
+        if(!_player.IsOnline) Dispose();
         _pinger.SendAsync(_player.Client.Address, Undefined.ServerConfiguration.MaxPlayerPing,null);
         _invalidRequestsCount++;
     }

@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Networking.DataConvert;
 using Networking.Loggers;
 using Networking.Packets;
@@ -8,7 +7,7 @@ using UndefinedNetworking.Exceptions;
 using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Resources;
 using UndefinedNetworking.GameEngine.Scenes.UI;
-using Utils.Events;
+using UndefinedNetworking.GameEngine.Scenes.UI.Views;
 using Version = Utils.Version;
 
 namespace UndefinedNetworking.GameEngine;
@@ -44,6 +43,6 @@ public abstract class ServerManagerBase
 
 
     public abstract IResourcesManager ResourcesManager { get; }
-    public abstract IUIView GetView(uint id);
+    public abstract IUIViewBase GetView(uint id);
 
 }
