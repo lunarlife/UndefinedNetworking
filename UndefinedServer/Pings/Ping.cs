@@ -3,7 +3,7 @@ using Utils.Events;
 
 namespace UndefinedServer.Pings;
 
-public abstract class Ping : IDisposable
+public abstract class Ping : IDisposable, IEventListener
 {
    
     public abstract int Delay { get; }
@@ -20,10 +20,9 @@ public abstract class Ping : IDisposable
         return Delay.ToString();
     }
 
+    public abstract void Dispose();
+
     public abstract void Update();
 
-    public void Dispose()
-    {
-        this.UnregisterListener();
-    }
+
 }

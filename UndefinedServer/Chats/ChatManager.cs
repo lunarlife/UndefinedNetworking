@@ -34,7 +34,7 @@ namespace UndefinedServer.Chats
         public ChatManager()
         {
             _instance = _instance is null ? this : throw new InstanceException($"{nameof(ChatManager)} is already exists");
-            this.RegisterListener();
+            /*this.RegisterListener();*/
         }
 
         public static IReadOnlyList<ChatType> Chats => EChats.Values;
@@ -50,8 +50,8 @@ namespace UndefinedServer.Chats
         }
         
         
-        [EventHandler]
-        private void OnPacketReceive(PacketReceiveEvent e)
+        /*[EventHandler]
+        private void OnPacketReceive(PacketReceiveEventData e)
         {
             if (e.Packet is not ChatPacket packet) return;
             var player = Undefined.CurrentGame.GetPlayer(e.Client.Identifier);
@@ -69,10 +69,10 @@ namespace UndefinedServer.Chats
             }
             if (!EChats.Contains(chat)) throw new ChatException("unknown chat");
             var ev = new ChatEvent(player, packet.Message, chat);
-            EventManager.CallEvent(ev);
+            /*EventManager.CallEvent(ev);#1#
             if (ev.IsCancelled || string.IsNullOrEmpty(ev.Message)) return;
             chat.Execute(player, ev.Message);
-        }
+        }*/
 
         public static ChatType GetChat(string name)
         {
@@ -108,9 +108,9 @@ namespace UndefinedServer.Chats
         }
 
         [EventHandler]
-        private void OnServerClosed(ServerClosedEvent e)
+        private void OnServerClosed(ServerClosedEventData e)
         {
-            EventManager.UnregisterEvents(this);
+            /*EventManager.UnregisterEvents(this);*/
         }
     }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Networking;
 using Networking.Events;
 using Networking.Loggers;
+using Networking.Packets;
 using UndefinedNetworking;
-using UndefinedNetworking.GameEngine;
 using UndefinedNetworking.Packets.Server;
 using UndefinedServer.Chats;
 using UndefinedServer.Commands;
@@ -20,11 +20,10 @@ using UndefinedServer.Plugins;
 using Utils;
 using Utils.AsyncOperations;
 using Utils.Events;
-using Version = Utils.Version;
 
 namespace UndefinedServer
 {
-    public class Undefined
+    public sealed class Undefined : IEventListener
     {
         private static Undefined? _instance;
         private static ServerConfiguration _serverConfiguration;
@@ -32,26 +31,54 @@ namespace UndefinedServer
         private static Server _server;
         private static Server _authServer;
         private static Game _currentGame;
-        private static Logger? _logger;
+        private static Logger _logger;
         
         private static List<Client> _waitedClients = new();
         public static bool IsEnabled { get; private set; }
-        public static Logger Logger => _logger;
+        public static Logger Logger => ServerManager.Logger;
 
         public static Game CurrentGame => _currentGame;
         public static int ServerDefaultTick => _serverConfiguration.Tick;
 
         public static ServerConfiguration ServerConfiguration => _serverConfiguration;
         public static ServerManager ServerManager { get; private set; }
-
-        private Undefined()
+        public static Event<ServerClosedEventData> ServerClose { get; } = new();
+        private Undefined(Logger logger)
         {
-            if (_instance is not null)
-                throw new ServerException("UndefinedServer is already instanced");
-            _instance = this;
-            EventManager.RegisterEvents(this);
+            _instance = _instance is null ? this : throw new ServerException("Sever is already instanced");
+            if (IsEnabled) throw new ServerException("server is already started");
+            AppDomain.CurrentDomain.ProcessExit += OnExit;
+            _logger = logger;
+            ServerManager = new ServerManager(_logger);
+            Initialize();
         }
-        
+
+        private void Initialize()
+        {
+            _ = new ChatManager();
+            _ = new CommandManager();
+            LoadAll();
+            _server = new Server();
+            IPAddress address;
+            try
+            {
+                address = _serverConfiguration.IPAddress;
+            }
+            catch (FormatException)
+            {
+                throw new ServerConfigurationException("invalid IP address");
+            }
+            _server.OpenServer(address, _serverConfiguration.Port);
+            Logger.Info($"Server opened on {address.MapToIPv4()}:{_serverConfiguration.Port}");
+            RuntimePacketer.IsSenderWorking = true;
+            RuntimePacketer.IsThreadPoolWorking = true;
+            IsEnabled = true;
+            _currentGame = new Game(new GameWorld("world", 1), _logger);
+            var operation = new AsyncOperationInfo<string>(10);
+            Plugin.LoadAllPlugins(operation);
+            operation.Wait(s => Logger.Info(s));
+            EventManager.RegisterEvents(this);
+        } 
         
 
         private static void ShowTypeCountInfo()
@@ -95,7 +122,7 @@ namespace UndefinedServer
             RuntimePacketer.IsSenderWorking = false;
             RuntimePacketer.IsThreadPoolWorking = false;
             EventManager.UnregisterEvents(_instance!);
-            try
+            try 
             {
                 _server.Close();
             }
@@ -107,49 +134,18 @@ namespace UndefinedServer
             IsEnabled = false;
             _logger = null;
             AppDomain.CurrentDomain.ProcessExit -= OnExit;
-            EventManager.CallEvent(new ServerClosedEvent());
+            ServerClose.Invoke(new ServerClosedEventData());
         }
         
         public static void StartupServer(Logger logger)
         {
-            if (IsEnabled) throw new ServerException("server is already started");
-            AppDomain.CurrentDomain.ProcessExit += OnExit;
-            _ = new Undefined();
-            ServerManager = new ServerManager();
-            _ = new ChatManager();
-            _ = new CommandManager();
-            _logger = logger;
-            LoadAll();
-            _server = new Server();
-            IPAddress address;
-            try
-            {
-                address = _serverConfiguration.IPAddress;
-            }
-            catch (FormatException)
-            {
-                throw new ServerConfigurationException("invalid IP address");
-            }
-            _server.OpenServer(address, _serverConfiguration.Port);
-            Logger.Info($"Server opened on {address.MapToIPv4()}:{_serverConfiguration.Port}");
-            RuntimePacketer.IsSenderWorking = true;
-            RuntimePacketer.IsThreadPoolWorking = true;
-            IsEnabled = true;
-            _currentGame = new Game(new GameWorld("world", 1), _logger);
-            var operation = new AsyncOperationInfo<string>(10);
-            Plugin.LoadAllPlugins(operation);
-            operation.Wait(s => Logger.Info(s));
+            _ = new Undefined(logger);
+           
         }
         private static void LoadAll()
         {
-            Logger.Info("Loading assemblies...");
-            AppDomain.CurrentDomain.Load("Utils");
-            AppDomain.CurrentDomain.Load("UECS");
-            AppDomain.CurrentDomain.Load("Networking");
-            AppDomain.CurrentDomain.Load("UndefinedNetworking");
             if(!ServerData.IsLoaded) ServerManager.ResourcesManager.LoadAll();
             //ShowTypeCountInfo();
-            NetworkData.LoadNetworkData();
             Logger.Info("Loading configurations...");
             if (Configuration.LoadConfiguration<ServerConfiguration>() is not { } configuration)
             {
@@ -167,28 +163,31 @@ namespace UndefinedServer
             }
             _serverConfiguration = configuration;
         }
-        [EventHandler]
-        private void OnPacketReceive(PacketReceiveEvent e)
+        private void OnClientInfoReceive(ClientInfoPacket packet, Client client)
         {
-            if (e.Packet is not ClientInfoPacket packet) return;
-            if (_waitedClients.Contains(e.Client))
+            if (_waitedClients.Contains(client))
             {
-                _waitedClients.Remove(e.Client);
+                _waitedClients.Remove(client);
                 if (packet.Version != ServerManager.ServerVersion)
                 {
-                    e.Client.Disconnect(DisconnectCause.InvalidVersion, "invalid version");
+                    client.Disconnect(DisconnectCause.InvalidVersion, "invalid version");
                     return;
                 }
-                e.Client.SendPacket(new ServerInfoPacket(_serverConfiguration.Tick, e.Client.Identifier, ChatManager.Chats, CommandManager.Commands));
-                _currentGame.ConnectPlayer(e.Client, packet);
+                client.SendPacket(new ServerInfoPacket(_serverConfiguration.Tick, client.Identifier, ChatManager.Chats, CommandManager.Commands));
+                _currentGame.ConnectPlayer(client, packet);
             }
-            else e.Client.Disconnect(DisconnectCause.InvalidPacket, "You already connected");
+            else client.Disconnect(DisconnectCause.InvalidPacket, "You already connected");
         }
         
         [EventHandler]
-        private void OnClientConnected(ClientConnectEvent e)
+        private void OnClientConnected(ClientConnectEventData e)
         {
             var client = new Client(e.Client, new Identifier());
+            client.OnPacketReceive.AddListener(data =>
+            {
+                if(data.Packet is ClientInfoPacket packet)
+                    OnClientInfoReceive(packet, client);
+            });
             _waitedClients.Add(client);
             Task.Delay(_clientInfoWaitTime).ContinueWith(_ =>
             {

@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using UECS;
-using UndefinedNetworking.Core;
 using UndefinedNetworking.Exceptions;
 
 namespace UndefinedNetworking.GameEngine.Components;
@@ -17,15 +15,18 @@ public sealed class RequireComponent : Attribute
         Components = components;
     }
 
-    public static void AddRequirements<T>(Component component, IComponentable<T> componentable) where T : Component
+    public static void AddRequirements<T>(IComponent<T> component, IComponentable<T> componentable) where T : ComponentData
     {
-        var type = component.GetType();
-        foreach (var attribute1 in type.GetCustomAttributes().Where(att => att is RequireComponent))
+        component.Modify(componentData =>
         {
-            var attribute = (RequireComponent)attribute1;
-            if (!attribute.Components.All(t => !t.IsAbstract && !t.IsInterface && t.IsSubclassOf(typeof(ComponentBase))))
-                throw new RequireException($"one of types is not {nameof(ComponentBase)}");
-            foreach(var t in attribute.Components) componentable.AddComponent(t);
-        }
+            var type = componentData.GetType();
+            foreach (var attribute1 in type.GetCustomAttributes().Where(att => att is RequireComponent))
+            {
+                var attribute = (RequireComponent)attribute1;
+                if (!attribute.Components.All(t => !t.IsAbstract && !t.IsInterface && t.IsSubclassOf(typeof(ComponentData))))
+                    throw new RequireException($"one of types is not {nameof(ComponentData)}");
+                foreach(var t in attribute.Components) componentable.AddComponent(t);
+            }
+        });
     }
 }

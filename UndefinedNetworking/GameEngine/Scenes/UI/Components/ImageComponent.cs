@@ -5,64 +5,20 @@ using Utils;
 
 namespace UndefinedNetworking.GameEngine.Scenes.UI.Components;
 
-public record ImageComponent : UINetworkComponent
+public record ImageComponent : UINetworkComponentData
 {
-    [ExcludeData] private ISprite? _sprite;
-    [ExcludeData] private Color _color;
-    [ExcludeData] private bool _raycastTarget;
-    [ExcludeData] private FilledSettings? _filledSettings;
-    [ExcludeData] private IShader? _shader;
-
-    [ClientData] 
-    public ISprite? Sprite
-    {
-        get => _sprite;
-        set
-        {
-            _sprite = value;
-            Update();
-        }
-    }
+    [ClientData]
+    public ISprite? Sprite { get; set; }
 
     [ExcludeData]
-    public IShader? Shader
-    {
-        get => _shader;
-        set
-        {
-            _shader = value;
-            Update();
-        }
-    }
+    public IShader? Shader { get; set; }
 
-    [ClientData] 
-    public Color Color
-    {
-        get => _color;
-        set
-        {
-            _color = value;
-            Update();
-        }
-    }
-    [ClientData] 
-    public bool RaycastTarget
-    {
-        get => _raycastTarget;
-        set
-        {
-            _raycastTarget = value;
-            Update();
-        }
-    }
-    [ClientData] 
-    public FilledSettings? FilledSettings
-    {
-        get => _filledSettings;
-        set
-        {
-            _filledSettings = value;
-            Update();
-        }
-    }
+    [ClientData]
+    public Color Color { get; set; }
+
+    [ClientData]
+    public bool RaycastTarget { get; set; }
+
+    [ClientData]
+    public FilledSettings? FilledSettings { get; set; }
 }

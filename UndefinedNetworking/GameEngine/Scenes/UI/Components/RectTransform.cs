@@ -2,22 +2,23 @@ using System;
 using System.Collections.Generic;
 using Networking.DataConvert;
 using Networking.DataConvert.Handlers;
+using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Structs;
 using Utils;
 using Utils.Dots;
 
 namespace UndefinedNetworking.GameEngine.Scenes.UI.Components;
 
-public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
+public sealed record RectTransform : UINetworkComponentData, IDeserializeHandler
 {
     [ExcludeData] private Rect _anchoredRect;
-    [ExcludeData] private RectTransform? _parent;
+    [ExcludeData] private IComponent<RectTransform>? _parent;
     [ExcludeData] private readonly List<RectTransform> _childs = new();
     [ExcludeData] private Dot2 _pivotValue;
     [ExcludeData] private Rect _localRect;
     
     [ClientData] private Rect _originalRect;
-    [ClientData] private bool _isActive;
+    [ClientData] private bool _isActiveUi;
     [ClientData] private Margins _margins;
     [ClientData] private int _layer;
     [ClientData] private Side _pivot;
@@ -26,7 +27,7 @@ public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
     
     public void OnDeserialize()
     {
-        UpdateRectLocal();
+        UpdateRect();
     }
 
 
@@ -62,26 +63,25 @@ public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
 
     [ExcludeData] public Rect AnchoredRect => _anchoredRect;
 
-    [ExcludeData] public bool IsActive
+    [ExcludeData] public bool IsActiveUI
     {
-        get => _isActive;
-        set
-        {
-            _isActive = value;
-            UpdateRect();
-        }
+        get => _isActiveUi;
+        set => _isActiveUi = value;
     }
 
     [ExcludeData]
-    public RectTransform? Parent
+    public IComponent<RectTransform>? Parent
     {
         get => _parent;
         set
         {
-            _parent?._childs.Remove(this);
+            _parent?.Modify(c => c._childs.Remove(this));
             _parent = value;
-            _parent?._childs.Add(this);
-            _parentViewIdentifier = _parent?.TargetView?.Identifier;
+            _parent?.Modify(c =>
+            {
+                c._childs.Add(this);
+                _parentViewIdentifier = c.TargetView.Identifier;
+            });
             UpdateRect();
         }
     }
@@ -122,19 +122,28 @@ public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
 
     [ExcludeData] public Rect LocalRect => _localRect;
 
+
     private void UpdateRect()
     {
-        UpdateRectLocal();
-        Update();
-    }
-
-    private void UpdateRectLocal()
-    {
-        if (_parentViewIdentifier is { } id && (Parent is null || Parent.TargetView.Identifier != _parentViewIdentifier))
+        if (_parentViewIdentifier is { } id)
         {
-            _parent = TargetView.Viewer.ActiveScene.GetView(id).GetComponent<RectTransform>();
-            _parent._childs.Add(this);
+            if (Parent is null)
+            {
+                _parent = TargetView.Viewer.ActiveScene.GetView(id).GetComponent<RectTransform>();
+                _parent.Modify(transform => transform._childs.Add(this));
+            }
+            else
+            {
+                _parent?.Modify(current =>
+                {
+                    if (current.TargetView.Identifier == _parentViewIdentifier) return;
+                    current._childs.Remove(this);
+                    _parent = TargetView.Viewer.ActiveScene.GetView(id).GetComponent<RectTransform>();
+                    _parent.Modify(transform => transform._childs.Add(this));
+                });
+            }
         }
+
 
         UpdatePivot();
         if (_parent is not null && Bind.IsExpandable)
@@ -145,36 +154,39 @@ public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
             var wh = (Dot2)_originalRect.WidthHeight;
             wh.X += _margins.Right + _margins.Left;
             wh.Y += _margins.Top + _margins.Bottom;
-            switch (Bind.Side)
+            _parent.Read(transform =>
             {
-                case Side.TopLeft:
-                case Side.TopRight:
-                case Side.RightBottom:
-                case Side.Center:
-                case Side.LeftBottom:
-                    wh = (Dot2)_parent._anchoredRect.WidthHeight - wh;
-                    break;
-                case Side.Top:
-                    localPosition.Y = _parent._anchoredRect.Height - localPosition.Y - wh.Y;
-                    wh.X = _parent._anchoredRect.Width - wh.X;
-                    break;
-                case Side.Right:
-                    localPosition.X = _parent._anchoredRect.Width - localPosition.X - wh.X;
-                    wh.Y = _parent._anchoredRect.Height - wh.Y;
-                    break;
-                case Side.Bottom:
-                    wh.X = _parent._anchoredRect.Width - wh.X;
-                    break;
-                case Side.Left:
-                    wh.Y = _parent._anchoredRect.Height - wh.Y;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                switch (Bind.Side)
+                {
+                    case Side.TopLeft:
+                    case Side.TopRight:
+                    case Side.RightBottom:
+                    case Side.Center:
+                    case Side.LeftBottom:
+                        wh = (Dot2)transform._anchoredRect.WidthHeight - wh;
+                        break;
+                    case Side.Top:
+                        localPosition.Y = transform._anchoredRect.Height - localPosition.Y - wh.Y;
+                        wh.X = transform._anchoredRect.Width - wh.X;
+                        break;
+                    case Side.Right:
+                        localPosition.X = transform._anchoredRect.Width - localPosition.X - wh.X;
+                        wh.Y = transform._anchoredRect.Height - wh.Y;
+                        break;
+                    case Side.Bottom:
+                        wh.X = transform._anchoredRect.Width - wh.X;
+                        break;
+                    case Side.Left:
+                        wh.Y = transform._anchoredRect.Height - wh.Y;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
 
-            var anchoredPosition = (Dot2)_parent.AnchoredRect.Position + localPosition;
-            _anchoredRect = new Rect(anchoredPosition, wh);
-            _localRect = new Rect(localPosition + wh * _pivotValue, wh);
+                var anchoredPosition = (Dot2)transform.AnchoredRect.Position + localPosition;
+                _anchoredRect = new Rect(anchoredPosition, wh);
+                _localRect = new Rect(localPosition + wh * _pivotValue, wh);
+            });
         }
         else
         {
@@ -185,8 +197,13 @@ public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
             wh.X -= _margins.Right - _margins.Left;
             wh.Y -= _margins.Top - _margins.Bottom;
             var localRect = new Rect(localPosition, wh);
-            var withBind = (Dot2)GetPositionWithBind(localRect);
-            var anchoredPosition = _parent is null ? withBind : (Dot2)_parent.AnchoredRect.Position + withBind;
+            var anchoredRect = Rect.Zero;
+            _parent?.Read(transform =>
+            {
+                anchoredRect = transform.AnchoredRect;
+            });
+            var withBind = (Dot2)GetPositionWithBind(localRect, anchoredRect);
+            var anchoredPosition = _parent is null ? withBind : (Dot2)anchoredRect.Position + withBind;
             _anchoredRect = new Rect(anchoredPosition, wh);
             _localRect = new Rect(withBind + (Dot2)_originalRect.WidthHeight * _pivotValue, wh);
         }
@@ -197,26 +214,26 @@ public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
         }
     }
 
-    private Dot2Int GetPositionWithBind(Rect rect) => _parent is null
+    private Dot2Int GetPositionWithBind(Rect rect, Rect parentAnchoredRect) => _parent is null
         ? rect.Position
         : Bind.Side switch
         {
-            Side.TopLeft => new Dot2Int(rect.Position.X, _parent._anchoredRect.Height - rect.Position.Y - rect.Height),
-            Side.Top => new Dot2Int(rect.Position.X - rect.Width / 2 + _parent._anchoredRect.Width / 2,
-                _parent._anchoredRect.Height - rect.Position.Y - rect.Height),
-            Side.TopRight => new Dot2Int(_parent._anchoredRect.Width - rect.Position.X - rect.Width,
-                _parent._anchoredRect.Height - rect.Position.Y - rect.Height),
-            Side.Right => new Dot2Int(_parent._anchoredRect.Width - rect.Position.X - rect.Width,
-                rect.Position.Y - rect.Height / 2 + _parent._anchoredRect.Height / 2),
-            Side.RightBottom => new Dot2Int(_parent._anchoredRect.Width - rect.Position.X - rect.Width,
+            Side.TopLeft => new Dot2Int(rect.Position.X, parentAnchoredRect.Height - rect.Position.Y - rect.Height),
+            Side.Top => new Dot2Int(rect.Position.X - rect.Width / 2 + parentAnchoredRect.Width / 2,
+                parentAnchoredRect.Height - rect.Position.Y - rect.Height),
+            Side.TopRight => new Dot2Int(parentAnchoredRect.Width - rect.Position.X - rect.Width,
+                parentAnchoredRect.Height - rect.Position.Y - rect.Height),
+            Side.Right => new Dot2Int(parentAnchoredRect.Width - rect.Position.X - rect.Width,
+                rect.Position.Y - rect.Height / 2 + parentAnchoredRect.Height / 2),
+            Side.RightBottom => new Dot2Int(parentAnchoredRect.Width - rect.Position.X - rect.Width,
                 rect.Position.Y),
-            Side.Bottom => new Dot2Int(rect.Position.X - rect.Width / 2 + _parent._anchoredRect.Width / 2,
+            Side.Bottom => new Dot2Int(rect.Position.X - rect.Width / 2 + parentAnchoredRect.Width / 2,
                 rect.Position.Y),
             Side.LeftBottom => rect.Position,
             Side.Left => new Dot2Int(rect.Position.X,
-                rect.Position.Y - rect.Height / 2 + _parent._anchoredRect.Height / 2),
-            Side.Center => new Dot2Int(rect.Position.X - rect.Width / 2 + _parent._anchoredRect.Width / 2,
-                rect.Position.Y - rect.Height / 2 + _parent._anchoredRect.Height / 2),
+                rect.Position.Y - rect.Height / 2 + parentAnchoredRect.Height / 2),
+            Side.Center => new Dot2Int(rect.Position.X - rect.Width / 2 + parentAnchoredRect.Width / 2,
+                rect.Position.Y - rect.Height / 2 + parentAnchoredRect.Height / 2),
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -242,11 +259,14 @@ public sealed record RectTransform : UINetworkComponent, IDeserializeHandler
         _margins = parameters.Margins;
         _bind = parameters.Bind;
         _parent = parameters.Parent;
-        _parentViewIdentifier = _parent?.TargetView.Identifier;
-        _parent?._childs.Add(this);
+        _parent?.Modify(transform =>
+        {
+            _parentViewIdentifier = transform.TargetView.Identifier;
+            transform._childs.Add(this);
+        });
         _pivot = parameters.Pivot;
         _layer = parameters.Layer;
-        _isActive = parameters.IsActive;
+        _isActiveUi = parameters.IsActive;
         UpdateRect();
     }
     public void SetBind(Side side, bool isExpandable = false)

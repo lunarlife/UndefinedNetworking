@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Networking.Packets;
 using UndefinedNetworking;
 using UndefinedNetworking.Commands;
 using UndefinedNetworking.Exceptions;
@@ -22,7 +23,7 @@ namespace UndefinedServer.Commands
         public CommandManager()
         {
             _instance = _instance is null ? this : throw new InstanceException($"{nameof(CommandManager)} is already exists");
-            this.RegisterListener();
+            /*this.RegisterListener();*/
            
         }
 
@@ -122,8 +123,8 @@ namespace UndefinedServer.Commands
                 sender.Client.Disconnect(DisconnectCause.InvalidPacket, "unknown command");
         }
         
-        [EventHandler]
-        private void OnCommandPacket(PacketReceiveEvent e)
+        /*[EventHandler]
+        private void OnCommandPacket(PacketReceiveEventData e)
         {
             if (e.Packet is CommandCompleteRequest ccp)
             {
@@ -170,11 +171,11 @@ namespace UndefinedServer.Commands
             }
             var commandEvent = new PlayerCommandEvent(command, player, chat);
             command.Execute(player, prs.ToArray(), chat);
-        }
+        }*/
         [EventHandler]
-        private void OnServerClosed(ServerClosedEvent e)
+        private void OnServerClosed(ServerClosedEventData e)
         {
-            EventManager.UnregisterEvents(this);
+            /*EventManager.UnregisterEvents(this);*/
         }
     }
 }

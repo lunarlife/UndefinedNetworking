@@ -3,7 +3,7 @@ using Utils.Events;
 
 namespace UndefinedServer.Events.Chats
 {
-    public class ChatEvent : Event, ICancellable
+    public class ChatEvent : EventData, ICancellable
     {
         public bool IsCancelled { get; set; }
         public UndefinedServer.Player Sender { get; }

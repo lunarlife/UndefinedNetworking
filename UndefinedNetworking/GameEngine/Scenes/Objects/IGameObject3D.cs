@@ -1,4 +1,4 @@
-using UndefinedNetworking.Core;
+using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.Objects.Components;
 
 namespace UndefinedNetworking.GameEngine.Scenes.Objects;

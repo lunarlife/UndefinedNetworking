@@ -1,13 +1,14 @@
 using Networking.Packets;
+using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components;
 
 namespace UndefinedNetworking.Packets.Components;
 
 public class UIComponentUpdatePacket : Packet
 {
-    public UINetworkComponent Component { get; private set; }
+    public IComponent<UINetworkComponentData> Component { get; private set; }
     
-    public UIComponentUpdatePacket(UINetworkComponent component)
+    public UIComponentUpdatePacket(IComponent<UINetworkComponentData> component)
     {
         Component = component;
     }

@@ -21,7 +21,7 @@ using Utils.Events;
 
 namespace UndefinedServer
 {
-    public sealed class Game : IEventCaller<TickEvent>
+    public sealed class Game : IEventListener
     {
         private Thread? _tickThread;
         private DateTime _lastTickTime;
@@ -33,17 +33,19 @@ namespace UndefinedServer
         public GameWorld World { get; }
 
         public SystemsController Systems => _systems;
+        public Event<TickEventData> Tick { get; } = new();
+        public Event<PlayerPreConnectingEventDataData> PlayerPreConnecting { get; } = new();
+        public Event<PlayerConnectedEventData> PlayerConnected { get; } = new();
 
         internal Game(GameWorld world, Logger logger)
         {
             _logger = logger;
             World = world;
             var netSystem = new NetComponentSystem();
-            DataConverter.AddDynamicConverter(netSystem);
             _systems.Register(netSystem);
             _systems.Register(new MouseHandlersSystem());
             StartUpdateLoop();
-            this.RegisterListener();
+            EventManager.RegisterEvents(this);
         }
 
         private void StartUpdateLoop()
@@ -54,7 +56,7 @@ namespace UndefinedServer
                 while (Undefined.IsEnabled)
                 {
                     Thread.Sleep(Undefined.ServerDefaultTick);
-                    Tick();
+                    DoTick();
                 }
             })
             {
@@ -62,7 +64,7 @@ namespace UndefinedServer
             };
             _tickThread.Start();
         } 
-        private void Tick()
+        private void DoTick()
         {
             
             foreach (var player in from player in _players.Values
@@ -86,27 +88,20 @@ namespace UndefinedServer
             var now = DateTime.Now;
             var delta = now - _lastTickTime;
             _lastTickTime = now;
-            this.CallEvent(new TickEvent((float)delta.TotalMilliseconds / 1000f));
+            Tick.Invoke(new TickEventData((float)delta.TotalMilliseconds / 1000f));
         }
+        
+        
+        
         [EventHandler]
-        private void OnPacketReceive(PacketReceiveEvent e)
+        private void OnPlayerDisconnect(PlayerDisconnectedEventData e)
         {
-            var identifier = e.Client.Identifier;
-            if(!_players.ContainsKey(identifier)) return;
-            switch (e.Packet)
-            {
-                case PlayerDisconnectPacket pdp:
-                {
-                    var player = _players[identifier];
-                    SendGamePacket(player, new PlayerDisconnectPacket(identifier, pdp.Cause, pdp.Message));
-                    e.Client.Disconnect(pdp.Cause, pdp.Message);
-                    break;
-                }
-            }
+                    var player = e.Player;
+                    SendGamePacket(player, new PlayerDisconnectPacket(e.Player.Identifier, e.Cause, e.Message));
         }
 
         [EventHandler]
-        private void OnPlayerDisconnected(PlayerDisconnectedEvent e)
+        private void OnPlayerDisconnected(PlayerDisconnectedEventData e)
         {
             var player = e.Player;
             _players.Remove(player.Identifier);
@@ -120,10 +115,12 @@ namespace UndefinedServer
         {
             //SendFilesFromDirectory(client, Paths.ResourcesFolder);
             var player = new Player(client, packet.Name, this);
+            player.OnResourcesDownloaded.AddListener(e => PlayerConnected.Invoke(new PlayerConnectedEventData(player)));
+            player.UpdatePlayerResources();
             _players.Add(player.Identifier, player);
             _logger.Info($"Player {player.Nickname} with id {player.Identifier} joined");
             SendGamePacket(player, new PlayerConnectPacket(player.Identifier, player.Nickname));
-            EventManager.CallEvent(new PlayerPreConnectingEvent(player));
+            PlayerPreConnecting.Invoke(new PlayerPreConnectingEventDataData(player));
 //            if(ChatManager.DebugChatIsEnabled) player.SendMessage(new ChatMessage(ServerSender.Instance, "sosi hui ebalai", Color.DarkRed, ChatManager.GetChat("debug")));
         }
 

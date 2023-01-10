@@ -1,3 +1,4 @@
+using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Structs;
 using Utils;
@@ -16,7 +17,7 @@ public struct ViewParameters
         IsActive = true;
         Parent = null;
     }
-    public RectTransform? Parent { get; set; }
+    public IComponent<RectTransform>? Parent { get; set; }
     public Margins Margins { get; set; }
     public Rect OriginalRect { get; set; }
     public Side Pivot { get; set; }

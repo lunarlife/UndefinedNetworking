@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Networking;
 using UndefinedNetworking.Events.ObjectEvents;
 using UndefinedNetworking.Events.SceneEvents;
 using UndefinedNetworking.Events.UIEvents;
@@ -18,6 +17,9 @@ namespace UndefinedServer.GameEngine.Scenes;
 public abstract class Scene<T> : IScene where T : IGameObject
 {
     private readonly List<IObjectBase> _objects = new();
+    public Event<SceneUnloadEventData> SceneUnload { get; } = new();
+    public Event<UIOpenEventData> UIOpen { get; } = new();
+    public Event<ObjectDestroyEventData> ObjectDestroy { get; } = new();
     public ISceneViewer Viewer { get; }
 
     public IObjectBase[] Objects => _objects.ToArray();
@@ -27,21 +29,19 @@ public abstract class Scene<T> : IScene where T : IGameObject
     protected Scene(ISceneViewer viewer)
     {
         Viewer = viewer;
-        this.CallEvent(new SceneLoadEvent(this));
     }
 
     public void CloseView(IUIView view)
     {
         if (!Objects.Contains(view)) throw new ObjectException("unknown object");
         _objects.Remove(view);
-        this.CallEvent(new UICloseEvent(view));
     }
 
     public IUIView OpenView(ViewParameters parameters)
     {
         var view = new UIView(Viewer, parameters);
         _objects.Add(view);
-        this.CallEvent(new UIOpenEvent(view));
+        UIOpen.Invoke(new UIOpenEventData(view));
         return view;
     }
 
@@ -52,14 +52,14 @@ public abstract class Scene<T> : IScene where T : IGameObject
     
     public void Unload()
     {
-        this.CallEvent(new SceneUnloadEvent(this));
+       SceneUnload.Invoke(new SceneUnloadEventData(this));
     }
     
     public void DestroyObject(IGameObject obj)
     {
         if (!Objects.Contains(obj)) throw new ObjectException("unknown object");
         _objects.Remove(obj);
-        this.CallEvent(new ObjectDestroyEvent(obj));
+        ObjectDestroy.Invoke(new ObjectDestroyEventData(obj));
     }
 
     public IUIView GetView(uint identifier) =>

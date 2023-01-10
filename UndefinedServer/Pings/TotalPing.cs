@@ -1,4 +1,5 @@
 using System;
+using Networking.Packets;
 using UndefinedNetworking.Packets.Server;
 using UndefinedServer.Events;
 using UndefinedServer.Events.PlayerEvents.PingEvents;
@@ -6,7 +7,7 @@ using Utils.Events;
 
 namespace UndefinedServer.Pings;
 
-public class TotalPing : Ping, IEventCaller<TotalPingUpdateEvent>
+public class TotalPing : Ping
 {
     private readonly Player _player;
     private int _delay;
@@ -18,6 +19,9 @@ public class TotalPing : Ping, IEventCaller<TotalPingUpdateEvent>
     public override DateTime LastPingUpdate => _lastPingUpdate;
 
     public override int InvalidRequestsCount => _invalidRequestsCount;
+    public Event<TotalPingUpdateEventData> UpdatePing { get; } = new();
+
+
     public override void Update()
     {
         _lastPingUpdate = DateTime.Now;
@@ -31,13 +35,18 @@ public class TotalPing : Ping, IEventCaller<TotalPingUpdateEvent>
         EventManager.RegisterEvents(this);
     }
     [EventHandler]
-    private void OnPacketReceive(PacketReceiveEvent e)
+    private void OnPacketReceive(PacketReceiveEventData e)
     {
+        if(e.Packet is not ClientPingPacket) return;
         var time = DateTime.Now;
         _delay = (int)(time - _lastPingUpdate).TotalMilliseconds;
         _lastPingUpdate = time;
         if (_invalidRequestsCount > 0) 
-            _invalidRequestsCount--;
-        this.CallEvent(new TotalPingUpdateEvent(_player));
+            _invalidRequestsCount--; 
+        UpdatePing.Invoke(new TotalPingUpdateEventData(_player));
+    }
+    public override void Dispose()
+    {
+        EventManager.UnregisterEvents(this);
     }
 }

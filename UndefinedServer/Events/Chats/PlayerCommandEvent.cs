@@ -4,7 +4,7 @@ using Utils.Events;
 
 namespace UndefinedServer.Events.Chats
 {
-    public class PlayerCommandEvent : Event
+    public class PlayerCommandEvent : EventData
     {
         public ICommand Command { get; }
         public UndefinedServer.Player Sender { get; }

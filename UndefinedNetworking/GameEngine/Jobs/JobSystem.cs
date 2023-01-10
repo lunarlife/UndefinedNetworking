@@ -18,7 +18,7 @@ public static class JobSystem
     }
 
     [EventHandler]
-    private static void Tick(TickEvent e)
+    private static void Tick(TickEventData e)
     {
         foreach (var job in Jobs)
         {

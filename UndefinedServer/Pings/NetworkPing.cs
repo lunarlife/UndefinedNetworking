@@ -5,7 +5,7 @@ using Utils.Events;
 
 namespace UndefinedServer.Pings;
 
-public class NetworkPing : Ping, IEventCaller<NetworkPingUpdateEvent>
+public class NetworkPing : Ping
 {
     private readonly Player _player;
     private readonly System.Net.NetworkInformation.Ping _pinger;
@@ -18,6 +18,8 @@ public class NetworkPing : Ping, IEventCaller<NetworkPingUpdateEvent>
     public override DateTime LastPingUpdate => _lastPingUpdate;
 
     public override int InvalidRequestsCount => _invalidRequestsCount;
+    public Event<NetworkPingUpdateEventData> UpdatePing { get; } = new();
+
     public override void Update()
     {
         _pinger.SendAsync(_player.Client.Address, Undefined.ServerConfiguration.MaxPlayerPing,null);
@@ -39,8 +41,10 @@ public class NetworkPing : Ping, IEventCaller<NetworkPingUpdateEvent>
         _delay = (int)reply.RoundtripTime;
         if (_invalidRequestsCount > 0) 
             _invalidRequestsCount--;
-        this.CallEvent(new NetworkPingUpdateEvent(_player));
+        UpdatePing.Invoke(new NetworkPingUpdateEventData(_player));
     }
-
-
+    public override void Dispose()
+    {
+        EventManager.UnregisterEvents(this);
+    }
 }

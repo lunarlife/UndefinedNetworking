@@ -1,5 +1,6 @@
 using UECS;
 using UndefinedNetworking.Events.Mouse;
+using UndefinedNetworking.GameEngine.Components;
 using UndefinedNetworking.GameEngine.Scenes.UI.Components.Mouse;
 using Utils.Events;
 
@@ -8,11 +9,11 @@ namespace UndefinedServer.UI;
 public class MouseHandlersSystem : IAsyncSystem
 {
 
-    [ChangeHandler] private Filter<MouseUpHandlerComponent> _upHandlers;       
-    [ChangeHandler] private Filter<MouseDownHandlerComponent> _downHandlers;
-    [ChangeHandler] private Filter<MouseEnterHandlerComponent> _enterHandlers;
-    [ChangeHandler] private Filter<MouseExitHandlerComponent> _exitHandlers;
-    [AutoInject] private Filter<MouseHoldingHandlerComponent> _holdingHandlers;
+    [ChangeHandler] private Filter<Component<MouseUpHandler>> _upHandlers;       
+    [ChangeHandler] private Filter<Component<MouseDownHandler>> _downHandlers;
+    [ChangeHandler] private Filter<Component<MouseEnterHandler>> _enterHandlers;
+    [ChangeHandler] private Filter<Component<MouseExitHandler>> _exitHandlers;
+    [AutoInject] private Filter<Component<MouseHoldingHandler>> _holdingHandlers;
 
     public void Init()
     {
@@ -23,9 +24,11 @@ public class MouseHandlersSystem : IAsyncSystem
     {
         foreach (var result in _holdingHandlers)
         {
-            var component = result.Get1();
-            if (!component.IsHolding) continue;
-            component.CallEvent(new UIMouseHoldingEvent(component.TargetView));
+            result.Get1().Read(component =>
+            {
+                if(!component.IsHolding) return;
+                component.Event.Invoke(new MouseHoldingEventData(component.TargetView));
+            });
         }
     }
 }

@@ -1,5 +1,8 @@
+using System;
 using System.IO;
+using System.Reflection;
 using Networking;
+using Networking.Packets;
 using UndefinedNetworking;
 using UndefinedNetworking.Chats;
 using UndefinedNetworking.Events.UIEvents;
@@ -12,14 +15,14 @@ using UndefinedNetworking.Packets.UI;
 using UndefinedNetworking.Packets.World;
 using UndefinedServer.Events;
 using UndefinedServer.Events.PlayerEvents;
-using UndefinedServer.GameEngine;
+using UndefinedServer.Exceptions;
 using UndefinedServer.GameEngine.Scenes;
 using UndefinedServer.Pings;
 using Utils.Events;
 
 namespace UndefinedServer
 {
-    public class Player : IPlayer, IEventCaller<PlayerConnectedEvent>, IEventCaller<PlayerDisconnectedEvent>
+    public class Player : IPlayer
     {
         private readonly Client _client;
         private Game? _currentGame;
@@ -27,6 +30,7 @@ namespace UndefinedServer
         private bool _isOnline;
         private PlayerConnectionState _state;
         private int _downloadedRes = 0;
+        private bool _isDownloadingRes;
         public IScene ActiveScene { get; private set; }
         public Identifier Identifier => _client.Identifier;
         public string Nickname { get; }
@@ -41,6 +45,8 @@ namespace UndefinedServer
 
         public bool IsConnectedAndReady => IsOnline && _state == PlayerConnectionState.ConnectedAndReady;
         public PlayerConnectionState State => _state;
+        public Event<PlayerResourcesDownloadedEventData> OnResourcesDownloaded { get; } = new();
+        public Event<PlayerDisconnectedEventData> OnDisconnect { get; } = new();
 
         internal Player(Client client, string nickname, Game game)
         {
@@ -50,30 +56,43 @@ namespace UndefinedServer
             Nickname = nickname;
             _client = client;
             _client.OnDisconnect += OnClientDisconnect;
-            EventManager.RegisterEvent(client, OnPacketReceive);
+            client.OnPacketReceive.AddListener(OnPacketReceive);
             _currentGame = game;
             _client.SendPacket(new WorldPacket(_currentGame.World.Seed));
             _isOnline = true;
-            SendNextResource();
         }
         
-        private void OnPacketReceive(PacketReceiveEvent e)
+        private void OnPacketReceive(PacketReceiveEventData e)
         {
             switch (e.Packet)
             {
                 case UIComponentUpdatePacket packet:
                     break;
+                case PlayerDisconnectPacket pdp:
+                    if (pdp.Identifier == Identifier)
+                        OnDisconnect.Invoke(new PlayerDisconnectedEventData(this, pdp.Cause, pdp.Message));
+                    Client.Disconnect(pdp.Cause, pdp.Message);
+                    break;
             }
         }
 
+        public void UpdatePlayerResources()
+        {
+            if (_isDownloadingRes) throw new ResourceDownloadException("resource is already downloading");
+            _downloadedRes = 0;
+            SendNextResource();
+        }
         private void SendNextResource()
         {
             if (Undefined.ServerManager.ResourcesManager.ResourcesCount == _downloadedRes)
             {
                 _state = PlayerConnectionState.ConnectedAndReady;
-                this.CallEvent(new PlayerConnectedEvent(this));
+                _isDownloadingRes = false;
+                OnResourcesDownloaded.Invoke(new PlayerResourcesDownloadedEventData(this));
                 return;
             }
+
+            _isDownloadingRes = true;
             var res = Undefined.ServerManager.ResourcesManager.GetResource(_downloadedRes);
             using var stream = File.OpenRead(res.FullPath);
             var length = stream.Length;
@@ -95,12 +114,11 @@ namespace UndefinedServer
         public void LoadScene(SceneType type)
         {
             ActiveScene = type is SceneType.XY ? new Scene2D(this) : new Scene3D(this);
-            EventManager.RegisterEvent<UICloseEvent>(ActiveScene, OnUIClose);
-            EventManager.RegisterEvent<UIOpenEvent>(ActiveScene, OnOpenView);
+            ActiveScene.UIOpen.AddListener(OnOpenView);
         }
         private void OnClientDisconnect(DisconnectCause cause, string message)
         {
-            this.CallEvent(new PlayerDisconnectedEvent(this, cause, message));
+            OnDisconnect.Invoke(new PlayerDisconnectedEventData(this, cause, message));
             _isOnline = false;
             NetworkPing.Dispose();
             TotalPing.Dispose();
@@ -117,15 +135,16 @@ namespace UndefinedServer
         }
         
         
-        private void OnOpenView(UIOpenEvent e)
+        private void OnOpenView(UIOpenEventData e)
         {
+            e.View.OnClose.AddListener(OnUIClose);
             var view = e.View;
             var packet = new UIViewOpenPacket(view.Identifier);
             if(_isOnline)
                 _client.SendPacket(packet);
         }
 
-        public void OnUIClose(UICloseEvent e)
+        private void OnUIClose(UICloseEventData e)
         {
             var view = e.View;
             if(_isOnline)

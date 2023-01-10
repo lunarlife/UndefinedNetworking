@@ -10,7 +10,7 @@ using Utils.Events;
 
 namespace UndefinedServer
 {
-    internal sealed class Client : IEventCaller<PacketReceiveEvent>
+    internal sealed class Client
     {
         private Server _server;
         private RuntimePacketer _packeter;
@@ -20,6 +20,7 @@ namespace UndefinedServer
         internal event DisconnectHandler OnDisconnect;
         public IPAddress Address { get; }
         public int Port { get; }
+        public Event<PacketReceiveEventData> OnPacketReceive => _packeter.OnReceive;
         internal Client(Server server, Identifier identifier)
         {
             Identifier = identifier;
@@ -31,7 +32,6 @@ namespace UndefinedServer
                 IsReading = true,
                 IsSending = true
             };
-            _packeter.Receive += OnReceive;
             _packeter.UnhandledException += exception =>
             {
                  Undefined.Logger.Error(exception.Message + "\n" + exception.StackTrace);
@@ -65,10 +65,6 @@ namespace UndefinedServer
         public void Request<T>(RequestPacket<T> packet, Action<T> callback) where T : Packet
         {
             _packeter.Request(packet, callback);
-        }
-        private void OnReceive(Packet packet)
-        {
-            this.CallEvent(new PacketReceiveEvent(packet, this));
         }
     }
 }

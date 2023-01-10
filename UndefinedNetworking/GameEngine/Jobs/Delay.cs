@@ -12,7 +12,7 @@ public sealed class Delay : JobInstruction
     {
         _delayMs = delayMs;
     }
-    public override void Tick(TickEvent e)
+    public override void Tick(TickEventData e)
     {
         _delayMs -= (int)(e.DeltaTime * 1000f);
         if (_delayMs <= 0)
